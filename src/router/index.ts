@@ -1,0 +1,59 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import HomeView from '@/views/HomeView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      component: DefaultLayout,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: HomeView
+        },
+        // Developer Tools
+        {
+          path: 'json-formatter',
+          name: 'json-formatter',
+          component: () => import('@/views/tools/dev/JsonFormatter.vue'),
+          meta: { title: 'JSON 格式化' }
+        },
+        {
+          path: 'timestamp',
+          name: 'timestamp',
+          component: () => import('@/views/tools/dev/TimestampConverter.vue'),
+          meta: { title: '时间戳转换' }
+        },
+        {
+          path: 'base64',
+          name: 'base64',
+          component: () => import('@/views/tools/dev/Base64Converter.vue'),
+          meta: { title: 'Base64 编解码' }
+        },
+        {
+          path: 'uuid',
+          name: 'uuid',
+          component: () => import('@/views/tools/dev/UuidGenerator.vue'),
+          meta: { title: 'UUID 生成器' }
+        },
+        {
+          path: 'regex',
+          name: 'regex',
+          component: () => import('@/views/tools/dev/RegexTester.vue'),
+          meta: { title: '正则测试' }
+        },
+        {
+          path: 'url-encode',
+          name: 'url-encode',
+          component: () => import('@/views/tools/dev/UrlEncoder.vue'),
+          meta: { title: 'URL 编解码' }
+        }
+      ]
+    }
+  ]
+})
+
+export default router
