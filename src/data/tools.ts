@@ -34,6 +34,8 @@ export interface Category {
   icon: any
   color: string
   bg: string
+  darkColor?: string
+  darkBg?: string
   tools: Tool[]
 }
 
@@ -44,6 +46,8 @@ export const toolsData: Category[] = [
     icon: Code2,
     color: 'text-blue-600',
     bg: 'bg-blue-50',
+    darkColor: 'dark:text-blue-400',
+    darkBg: 'dark:bg-blue-900/30',
     tools: [
       { name: 'JSON 格式化', desc: '美化、压缩、校验 JSON 数据', icon: FileJson, path: '/json-formatter', status: '已开发' },
       { name: '时间戳转换', desc: 'Unix 时间戳与日期互相转换', icon: Clock, path: '/timestamp', status: '已开发' },
@@ -59,6 +63,8 @@ export const toolsData: Category[] = [
     icon: Type,
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
+    darkColor: 'dark:text-emerald-400',
+    darkBg: 'dark:bg-emerald-900/30',
     tools: [
       { name: '字数统计', desc: '统计汉字、单词、字符数', icon: AlignLeft, path: '/word-count', status: '已开发' },
       { name: '文本 Diff', desc: '两段文本差异对比', icon: ArrowLeftRight, path: '/diff', status: '已开发' },
@@ -72,6 +78,8 @@ export const toolsData: Category[] = [
     icon: ImageIcon,
     color: 'text-purple-600',
     bg: 'bg-purple-50',
+    darkColor: 'dark:text-purple-400',
+    darkBg: 'dark:bg-purple-900/30',
     tools: [
       { name: '二维码生成', desc: '文本/链接生成二维码', icon: QrCode, path: '/qrcode', status: '已开发' },
       { name: '颜色转换', desc: 'HEX, RGB, HSL 互转', icon: Palette, path: '/color', status: '已开发' },
@@ -84,6 +92,8 @@ export const toolsData: Category[] = [
     icon: Clock,
     color: 'text-orange-600',
     bg: 'bg-orange-50',
+    darkColor: 'dark:text-orange-400',
+    darkBg: 'dark:bg-orange-900/30',
     tools: [
       { name: '单位换算', desc: '常用物理单位换算', icon: Calculator, path: '/unit', status: '已开发' },
       { name: '番茄钟', desc: '专注工作倒计时', icon: Clock, path: '/pomodoro', status: '已开发' },

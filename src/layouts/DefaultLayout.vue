@@ -18,7 +18,14 @@ import {
 } from 'lucide-vue-next'
 import { useDark, useToggle } from '@vueuse/core'
 
-const isDark = useDark()
+const isDark = useDark({
+  selector: 'html',
+  attribute: 'class',
+  valueDark: 'dark',
+  valueLight: '',
+  storageKey: 'vueuse-color-scheme',
+  disableTransition: false,
+})
 const toggleDark = useToggle(isDark)
 
 const router = useRouter()
@@ -151,7 +158,7 @@ const scrollToAnchor = (id: string) => {
 </script>
 
 <template>
-  <div class="h-screen bg-gray-50 flex overflow-hidden">
+  <div class="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden transition-colors duration-300">
     <!-- Command Palette Modal -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
@@ -169,32 +176,32 @@ const scrollToAnchor = (id: string) => {
         <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" @click="closeSearch"></div>
         
         <!-- Modal Content -->
-        <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+        <div class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
           <!-- Search Header -->
-          <div class="flex items-center px-4 py-4 border-b border-gray-100">
-            <Search class="w-5 h-5 text-gray-400 mr-3" />
+          <div class="flex items-center px-4 py-4 border-b border-gray-100 dark:border-gray-700">
+            <Search class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-3" />
             <input
               ref="searchInput"
               v-model="searchQuery"
               type="text"
               placeholder="Search tools..."
-              class="flex-1 bg-transparent border-none focus:ring-0 text-lg placeholder-gray-400 text-gray-900"
+              class="flex-1 bg-transparent border-none focus:ring-0 text-lg placeholder-gray-400 text-gray-900 dark:text-gray-100"
             >
             <button 
               @click="closeSearch"
-              class="p-1 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+              class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
-              <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 bg-gray-50 px-1.5 font-mono text-[10px] font-medium text-gray-500">ESC</kbd>
+              <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-400">ESC</kbd>
             </button>
           </div>
 
           <!-- Search Results -->
           <div class="flex-1 overflow-y-auto p-2">
-            <div v-if="!searchQuery" class="text-center py-12 text-gray-500">
+            <div v-if="!searchQuery" class="text-center py-12 text-gray-500 dark:text-gray-400">
               <p class="text-sm">Type to search for tools...</p>
             </div>
             
-            <div v-else-if="filteredTools.length === 0" class="text-center py-12 text-gray-500">
+            <div v-else-if="filteredTools.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
               <p class="text-sm">No tools found for "{{ searchQuery }}"</p>
             </div>
 
@@ -203,26 +210,26 @@ const scrollToAnchor = (id: string) => {
                 v-for="tool in filteredTools"
                 :key="tool.name"
                 @click="handleSearchSelect(tool)"
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 group transition-colors text-left"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 group transition-colors text-left"
               >
-                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                <div class="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
                   <component :is="tool.icon" class="w-5 h-5" />
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
-                    <span class="font-medium text-gray-900">{{ tool.name }}</span>
-                    <span class="text-xs text-gray-400">•</span>
-                    <span class="text-xs text-gray-500">{{ tool.category }}</span>
+                    <span class="font-medium text-gray-900 dark:text-gray-100">{{ tool.name }}</span>
+                    <span class="text-xs text-gray-400 dark:text-gray-500">•</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ tool.category }}</span>
                   </div>
-                  <p class="text-sm text-gray-500 line-clamp-1">{{ tool.desc }}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">{{ tool.desc }}</p>
                 </div>
-                <ChevronRight class="w-4 h-4 text-gray-300 group-hover:text-gray-400" />
+                <ChevronRight class="w-4 h-4 text-gray-300 dark:text-gray-600 group-hover:text-gray-400 dark:group-hover:text-gray-500" />
               </button>
             </div>
           </div>
           
           <!-- Footer -->
-          <div class="bg-gray-50 px-4 py-2 text-xs text-gray-500 border-t border-gray-100 flex justify-between">
+          <div class="bg-gray-50 dark:bg-gray-700/50 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700 flex justify-between">
             <span>{{ filteredTools.length }} results found</span>
             <div class="flex gap-3">
               <span class="flex items-center gap-1"><kbd class="font-sans">↑↓</kbd> to navigate</span>
@@ -243,7 +250,7 @@ const scrollToAnchor = (id: string) => {
     <!-- Sidebar -->
     <aside 
       :class="[
-        'fixed lg:static inset-y-0 left-0 z-30 w-72 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 transition-transform duration-300 cubic-bezier(0.4, 0, 0.2, 1) shrink-0 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] h-full',
+        'fixed lg:static inset-y-0 left-0 z-30 w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-800/50 transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) shrink-0 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] h-full',
         'lg:translate-x-0',
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
@@ -251,14 +258,14 @@ const scrollToAnchor = (id: string) => {
       <div class="h-full flex flex-col">
         <!-- Logo -->
         <div class="h-20 flex items-center px-8">
-          <span class="text-2xl font-bold text-gray-900 flex items-center gap-3 tracking-tight">
+          <span class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3 tracking-tight">
             <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
               <Code2 class="w-6 h-6" />
             </div>
             DevTools
           </span>
           <button 
-            class="ml-auto lg:hidden text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+            class="ml-auto lg:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             @click="toggleSidebar"
           >
             <X class="w-6 h-6" />
@@ -267,7 +274,7 @@ const scrollToAnchor = (id: string) => {
 
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-2">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 mb-4">
+          <div class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-4 mb-4">
             Menu
           </div>
           <a
@@ -277,8 +284,8 @@ const scrollToAnchor = (id: string) => {
             class="group flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 relative overflow-hidden"
             :class="[
               activeSection === item.id 
-                ? 'bg-blue-50/80 text-blue-600 font-semibold shadow-sm ring-1 ring-blue-100' 
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-blue-50/80 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold shadow-sm ring-1 ring-blue-100 dark:ring-blue-900/30' 
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
             ]"
             @click.prevent="handleMenuClick(item.id)"
           >
@@ -297,12 +304,12 @@ const scrollToAnchor = (id: string) => {
 
         <!-- Footer -->
         <div class="p-6 border-t border-gray-100">
-          <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-4 text-white shadow-xl shadow-gray-900/10 relative overflow-hidden group">
+          <div class="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 text-white shadow-xl shadow-gray-900/10 dark:shadow-black/30 relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
               <Code2 class="w-12 h-12 rotate-12" />
             </div>
             <h4 class="font-bold mb-1 relative z-10">Pro Version</h4>
-            <p class="text-xs text-gray-300 mb-3 relative z-10">Get access to all tools</p>
+            <p class="text-xs text-gray-300 dark:text-gray-400 mb-3 relative z-10">Get access to all tools</p>
             <button class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm transition-colors border border-white/10 relative z-10">
               Upgrade Now
             </button>
@@ -312,11 +319,11 @@ const scrollToAnchor = (id: string) => {
     </aside>
 
     <!-- Main Content -->
-    <div ref="mainContent" class="flex-1 flex flex-col min-w-0 bg-gray-50/50 h-full overflow-y-auto scroll-smooth">
+    <div ref="mainContent" class="flex-1 flex flex-col min-w-0 bg-gray-50/50 dark:bg-gray-900/50 h-full overflow-y-auto scroll-smooth">
       <!-- Header -->
-      <header class="sticky top-0 z-20 h-20 flex items-center px-4 lg:px-8 bg-white/70 backdrop-blur-xl border-b border-gray-200/50 transition-all duration-200 shrink-0">
+      <header class="sticky top-0 z-20 h-20 flex items-center px-4 lg:px-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-all duration-200 shrink-0">
         <button 
-          class="lg:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-xl mr-4"
+          class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl mr-4"
           @click="toggleSidebar"
         >
           <Menu class="w-6 h-6" />
@@ -328,14 +335,14 @@ const scrollToAnchor = (id: string) => {
             class="relative hidden sm:block w-full max-w-md group cursor-pointer"
             @click="openSearch"
           >
-            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 group-focus-within:text-blue-500 transition-colors" />
             <input 
               type="text" 
               placeholder="Search tools..." 
-              class="w-full pl-10 pr-4 py-2.5 bg-gray-100/50 border-none rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 pointer-events-none"
+              class="w-full pl-10 pr-4 py-2.5 bg-gray-100/50 dark:bg-gray-800/50 border-none rounded-xl text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-gray-800 transition-all duration-200 pointer-events-none"
             >
             <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 bg-gray-50 px-1.5 font-mono text-[10px] font-medium text-gray-500">
+              <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-400">
                 <span class="text-xs">⌘</span>K
               </kbd>
             </div>
