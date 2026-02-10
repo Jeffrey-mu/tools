@@ -60,10 +60,10 @@ export const toolsData: Category[] = [
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
     tools: [
-      { name: '字数统计', desc: '统计汉字、单词、字符数', icon: AlignLeft, path: '/word-count', status: '待开发' },
-      { name: '文本 Diff', desc: '两段文本差异对比', icon: ArrowLeftRight, path: '/diff', status: '待开发' },
-      { name: '密码生成', desc: '随机生成强密码', icon: KeyRound, path: '/password-gen', status: '待开发' },
-      { name: '命名转换', desc: '驼峰、下划线等风格转换', icon: CaseUpper, path: '/case-converter', status: '待开发' },
+      { name: '字数统计', desc: '统计汉字、单词、字符数', icon: AlignLeft, path: '/word-count', status: '已开发' },
+      { name: '文本 Diff', desc: '两段文本差异对比', icon: ArrowLeftRight, path: '/diff', status: '已开发' },
+      { name: '密码生成', desc: '随机生成强密码', icon: KeyRound, path: '/password-gen', status: '已开发' },
+      { name: '命名转换', desc: '驼峰、下划线等风格转换', icon: CaseUpper, path: '/case-converter', status: '已开发' },
     ]
   },
   {
@@ -73,8 +73,8 @@ export const toolsData: Category[] = [
     color: 'text-purple-600',
     bg: 'bg-purple-50',
     tools: [
-      { name: '二维码生成', desc: '文本/链接生成二维码', icon: QrCode, path: '/qrcode', status: '待开发' },
-      { name: '颜色转换', desc: 'HEX, RGB, HSL 互转', icon: Palette, path: '/color', status: '待开发' },
+      { name: '二维码生成', desc: '文本/链接生成二维码', icon: QrCode, path: '/qrcode', status: '已开发' },
+      { name: '颜色转换', desc: 'HEX, RGB, HSL 互转', icon: Palette, path: '/color', status: '已开发' },
       { name: '图片压缩', desc: '本地图片压缩减小体积', icon: Minimize, path: '/image-compress', status: '待开发' },
     ]
   },
