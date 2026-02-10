@@ -103,30 +103,44 @@ const menuItems = [
   { name: '生活效率', id: 'life-tools', icon: Clock },
 ]
 
+const mainContent = ref<HTMLElement | null>(null)
+
 const handleMenuClick = async (id: string) => {
   isSidebarOpen.value = false
   activeSection.value = id
   
   if (route.path !== '/') {
     await router.push('/')
-    // Wait for DOM update
+    // Wait for DOM update and route transition
     setTimeout(() => {
       scrollToAnchor(id)
-    }, 100)
+    }, 300)
   } else {
     scrollToAnchor(id)
   }
 }
 
 const scrollToAnchor = (id: string) => {
+  if (!mainContent.value) return
+
   if (id === 'home') {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    mainContent.value.scrollTo({ top: 0, behavior: 'smooth' })
     return
   }
   
   const element = document.getElementById(id)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Calculate offset including header height (80px) + some padding
+    const headerHeight = 80
+    const padding = 24
+    const elementPosition = element.getBoundingClientRect().top
+    const containerPosition = mainContent.value.getBoundingClientRect().top
+    const offsetPosition = elementPosition - containerPosition + mainContent.value.scrollTop - headerHeight - padding
+
+    mainContent.value.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
   }
 }
 </script>
@@ -293,7 +307,7 @@ const scrollToAnchor = (id: string) => {
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-w-0 bg-gray-50/50 h-full overflow-y-auto scroll-smooth">
+    <div ref="mainContent" class="flex-1 flex flex-col min-w-0 bg-gray-50/50 h-full overflow-y-auto scroll-smooth">
       <!-- Header -->
       <header class="sticky top-0 z-20 h-20 flex items-center px-4 lg:px-8 bg-white/70 backdrop-blur-xl border-b border-gray-200/50 transition-all duration-200 shrink-0">
         <button 
