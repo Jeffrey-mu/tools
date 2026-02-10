@@ -13,8 +13,13 @@ import {
   Search,
   Github,
   Sun,
+  Moon,
   ChevronRight
 } from 'lucide-vue-next'
+import { useDark, useToggle } from '@vueuse/core'
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const router = useRouter()
 const route = useRoute()
@@ -346,8 +351,12 @@ const scrollToAnchor = (id: string) => {
           >
             <Github class="w-5 h-5" />
           </a>
-          <button class="p-2 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 rounded-xl transition-all duration-200">
-            <Sun class="w-5 h-5" />
+          <button 
+            @click="toggleDark()"
+            class="p-2 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:text-yellow-400 dark:hover:bg-gray-800 rounded-xl transition-all duration-200"
+          >
+            <Sun v-if="!isDark" class="w-5 h-5" />
+            <Moon v-else class="w-5 h-5" />
           </button>
           <div class="h-8 w-px bg-gray-200 mx-1"></div>
           <button class="flex items-center gap-2 p-1 pl-2 pr-1 hover:bg-gray-100 rounded-full border border-gray-200/50 transition-all duration-200 group">
