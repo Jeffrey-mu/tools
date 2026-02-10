@@ -14,6 +14,7 @@
     "browser-image-compression": "^2.0.2",
     "codemirror": "^6.0.2",
     "colord": "^2.9.3",
+    "convert-units": "^2.3.4",
     "dayjs": "^1.11.19",
     "diff": "^8.0.3",
     "lucide-vue-next": "^0.563.0",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "@types/convert-units": "^2.3.12",
     "@types/diff": "^8.0.0",
     "@types/node": "^25.2.2",
     "@types/qrcode": "^1.5.6",
