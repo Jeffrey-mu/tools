@@ -93,6 +93,12 @@ const router = createRouter({
           name: 'image-compress',
           component: () => import('@/views/tools/image/ImageCompressor.vue'),
           meta: { title: '图片压缩' }
+        },
+        {
+          path: 'unit',
+          name: 'unit-converter',
+          component: () => import('@/views/tools/life/UnitConverter.vue'),
+          meta: { title: '单位换算' }
         }
       ]
     }
