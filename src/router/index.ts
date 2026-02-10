@@ -14,6 +14,12 @@ const router = createRouter({
           name: 'home',
           component: HomeView
         },
+        {
+          path: 'pro',
+          name: 'pro',
+          component: () => import('@/views/ProView.vue'),
+          meta: { title: 'Pro 版本' }
+        },
         // Developer Tools
         {
           path: 'json-formatter',

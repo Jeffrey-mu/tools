@@ -310,7 +310,10 @@ const scrollToAnchor = (id: string) => {
             </div>
             <h4 class="font-bold mb-1 relative z-10">Pro Version</h4>
             <p class="text-xs text-gray-300 dark:text-gray-400 mb-3 relative z-10">Get access to all tools</p>
-            <button class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm transition-colors border border-white/10 relative z-10">
+            <button 
+              @click="router.push('/pro')"
+              class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm transition-colors border border-white/10 relative z-10"
+            >
               Upgrade Now
             </button>
           </div>
