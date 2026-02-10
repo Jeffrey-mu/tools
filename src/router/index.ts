@@ -99,6 +99,12 @@ const router = createRouter({
           name: 'unit-converter',
           component: () => import('@/views/tools/life/UnitConverter.vue'),
           meta: { title: '单位换算' }
+        },
+        {
+          path: 'pomodoro',
+          name: 'pomodoro',
+          component: () => import('@/views/tools/life/PomodoroTimer.vue'),
+          meta: { title: '番茄钟' }
         }
       ]
     }
