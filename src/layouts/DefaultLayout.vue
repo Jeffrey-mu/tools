@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { toolsData } from '@/data/tools'
 import { 
@@ -51,6 +51,8 @@ const openSearch = () => {
     searchInput.value?.focus()
   }, 100)
 }
+
+provide('openSearch', openSearch)
 
 const closeSearch = () => {
   isSearchOpen.value = false
