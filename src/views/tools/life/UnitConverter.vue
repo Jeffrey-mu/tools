@@ -134,107 +134,132 @@ const copyResult = () => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col gap-6">
-    <div class="card p-6">
-      <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
-        <ArrowRightLeft class="w-5 h-5 text-primary-500" />
-        单位换算
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Categories Sidebar/Menu -->
-        <div class="md:col-span-1 space-y-1">
+  <div class="h-full flex flex-col gap-6 max-w-6xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row h-[600px]">
+      
+      <!-- Categories Sidebar -->
+      <div class="w-full md:w-64 bg-gray-50/50 dark:bg-gray-900/50 border-r border-gray-100 dark:border-gray-700 p-4 overflow-y-auto">
+        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-4">度量类型</h2>
+        <div class="space-y-1">
           <button
             v-for="m in measures"
             :key="m.id"
             @click="activeMeasure = m.id"
-            class="w-full text-left px-4 py-2 rounded-lg text-sm transition-colors"
+            class="w-full text-left px-4 py-3 rounded-xl text-sm transition-all duration-200 font-medium flex items-center justify-between group"
             :class="activeMeasure === m.id 
-              ? 'bg-primary-50 text-primary-600 font-medium dark:bg-primary-900/20' 
-              : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800'"
+              ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700' 
+              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'"
           >
             {{ m.name }}
+            <span v-if="activeMeasure === m.id" class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
           </button>
         </div>
+      </div>
 
-        <!-- Conversion Area -->
-        <div class="md:col-span-3">
-          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
-            <div class="grid grid-cols-1 gap-6">
-              
-              <!-- From -->
-              <div class="space-y-2">
-                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">从</label>
-                <div class="flex gap-4">
+      <!-- Conversion Area -->
+      <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <div class="p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+            <span class="p-2 bg-indigo-100 text-indigo-600 rounded-lg dark:bg-indigo-900/30 dark:text-indigo-400">
+              <ArrowRightLeft class="w-6 h-6" />
+            </span>
+            {{ measureMap[activeMeasure] || '单位换算' }}
+          </h2>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8 md:p-12 flex flex-col justify-center">
+          <div class="flex flex-col gap-8 relative">
+            
+            <!-- From Input Group -->
+            <div class="group">
+              <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">从 (From)</label>
+              <div class="flex gap-4 p-2 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 transition-all focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
+                <input
+                  v-model="fromValue"
+                  type="number"
+                  @input="calculate('from')"
+                  class="flex-1 bg-transparent border-none text-3xl font-light text-gray-900 dark:text-white p-2 focus:ring-0 placeholder-gray-300 tabular-nums"
+                  placeholder="0"
+                />
+                <div class="relative min-w-[140px]">
                   <select 
                     v-model="fromUnit"
-                    class="w-1/3 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm"
+                    class="w-full h-full appearance-none bg-white dark:bg-gray-800 border-none rounded-xl py-2 pl-4 pr-10 text-right font-medium text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <option v-for="opt in unitOptions" :key="opt.value" :value="opt.value">
                       {{ opt.label }}
                     </option>
                   </select>
-                  <input
-                    v-model="fromValue"
-                    type="number"
-                    @input="calculate('from')"
-                    class="flex-1 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 font-mono"
-                    placeholder="输入数值..."
-                  />
-                </div>
-              </div>
-
-              <!-- Swap Button -->
-              <div class="flex justify-center -my-2 relative z-10">
-                <button 
-                  @click="swapUnits"
-                  class="p-2 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-transform hover:rotate-180 active:scale-95 text-gray-500 hover:text-primary-500"
-                  title="交换单位"
-                >
-                  <ArrowRightLeft class="w-4 h-4" />
-                </button>
-              </div>
-
-              <!-- To -->
-              <div class="space-y-2">
-                <label class="text-xs font-medium text-gray-500 uppercase tracking-wider">到</label>
-                <div class="flex gap-4">
-                  <select 
-                    v-model="toUnit"
-                    class="w-1/3 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm"
-                  >
-                    <option v-for="opt in unitOptions" :key="opt.value" :value="opt.value">
-                      {{ opt.label }}
-                    </option>
-                  </select>
-                  <div class="flex-1 relative">
-                    <input
-                      v-model="toValue"
-                      type="number"
-                      @input="calculate('to')"
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 font-mono"
-                      placeholder="结果..."
-                    />
-                    <button 
-                      v-if="toValue"
-                      @click="copyResult"
-                      class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <Check v-if="copied" class="w-4 h-4 text-green-500" />
-                      <Copy v-else class="w-4 h-4" />
-                    </button>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                   </div>
                 </div>
               </div>
-
             </div>
+
+            <!-- Swap Action -->
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <button 
+                @click="swapUnits"
+                class="p-3 rounded-full bg-white dark:bg-gray-700 shadow-lg border border-gray-100 dark:border-gray-600 text-gray-400 hover:text-indigo-600 hover:scale-110 active:scale-95 transition-all duration-300"
+                title="交换"
+              >
+                <ArrowRightLeft class="w-5 h-5 rotate-90" />
+              </button>
+            </div>
+
+            <!-- To Input Group -->
+            <div class="group">
+              <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">到 (To)</label>
+              <div class="flex gap-4 p-2 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 transition-all focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500">
+                <input
+                  v-model="toValue"
+                  type="number"
+                  @input="calculate('to')"
+                  class="flex-1 bg-transparent border-none text-3xl font-light text-indigo-900 dark:text-indigo-100 p-2 focus:ring-0 placeholder-indigo-200 tabular-nums"
+                  placeholder="0"
+                />
+                <div class="relative min-w-[140px]">
+                  <select 
+                    v-model="toUnit"
+                    class="w-full h-full appearance-none bg-white dark:bg-gray-800 border-none rounded-xl py-2 pl-4 pr-10 text-right font-medium text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <option v-for="opt in unitOptions" :key="opt.value" :value="opt.value">
+                      {{ opt.label }}
+                    </option>
+                  </select>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+                
+                <!-- Copy Button -->
+                <button 
+                  v-if="toValue"
+                  @click="copyResult"
+                  class="absolute right-4 bottom-[-2.5rem] flex items-center gap-1 text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
+                >
+                  <Check v-if="copied" class="w-4 h-4" />
+                  <Copy v-else class="w-4 h-4" />
+                  {{ copied ? '已复制' : '复制结果' }}
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Formula Display (Optional) -->
-          <div class="mt-6 text-center text-sm text-gray-500">
-            1 {{ convert().describe(fromUnit as any).singular }} = 
-            {{ convert(1).from(fromUnit as any).to(toUnit as any).toFixed(6).replace(/\.?0+$/, '') }} 
-            {{ convert().describe(toUnit as any).singular }}
+          <!-- Footer Info -->
+          <div class="mt-12 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-800/50 text-xs font-medium text-gray-400 border border-gray-100 dark:border-gray-700">
+              <span>公式参考:</span>
+              <span class="text-gray-600 dark:text-gray-300">
+                1 {{ convert().describe(fromUnit as any).singular }} ≈ 
+                {{ convert(1).from(fromUnit as any).to(toUnit as any).toFixed(4) }} 
+                {{ convert().describe(toUnit as any).singular }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
