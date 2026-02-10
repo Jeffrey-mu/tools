@@ -105,6 +105,18 @@ const router = createRouter({
           name: 'pomodoro',
           component: () => import('@/views/tools/life/PomodoroTimer.vue'),
           meta: { title: '番茄钟' }
+        },
+        {
+          path: 'todo',
+          name: 'todo',
+          component: () => import('@/views/tools/life/TodoList.vue'),
+          meta: { title: '待办清单' }
+        },
+        {
+          path: 'random',
+          name: 'random',
+          component: () => import('@/views/tools/life/DecisionWheel.vue'),
+          meta: { title: '决策转盘' }
         }
       ]
     }
