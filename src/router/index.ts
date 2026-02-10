@@ -87,6 +87,12 @@ const router = createRouter({
           name: 'color',
           component: () => import('@/views/tools/image/ColorConverter.vue'),
           meta: { title: '颜色转换' }
+        },
+        {
+          path: 'image-compress',
+          name: 'image-compress',
+          component: () => import('@/views/tools/image/ImageCompressor.vue'),
+          meta: { title: '图片压缩' }
         }
       ]
     }
