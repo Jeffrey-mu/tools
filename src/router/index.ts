@@ -50,6 +50,43 @@ const router = createRouter({
           name: 'url-encode',
           component: () => import('@/views/tools/dev/UrlEncoder.vue'),
           meta: { title: 'URL 编解码' }
+        },
+        // Text Tools
+        {
+          path: 'word-count',
+          name: 'word-count',
+          component: () => import('@/views/tools/text/WordCount.vue'),
+          meta: { title: '字数统计' }
+        },
+        {
+          path: 'diff',
+          name: 'diff',
+          component: () => import('@/views/tools/text/TextDiff.vue'),
+          meta: { title: '文本 Diff' }
+        },
+        {
+          path: 'case-converter',
+          name: 'case-converter',
+          component: () => import('@/views/tools/text/CaseConverter.vue'),
+          meta: { title: '命名转换' }
+        },
+        {
+          path: 'password-gen',
+          name: 'password-gen',
+          component: () => import('@/views/tools/text/PasswordGenerator.vue'),
+          meta: { title: '密码生成' }
+        },
+        {
+          path: 'qrcode',
+          name: 'qrcode',
+          component: () => import('@/views/tools/image/QrCodeGenerator.vue'),
+          meta: { title: '二维码生成' }
+        },
+        {
+          path: 'color',
+          name: 'color',
+          component: () => import('@/views/tools/image/ColorConverter.vue'),
+          meta: { title: '颜色转换' }
         }
       ]
     }
