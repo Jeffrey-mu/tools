@@ -338,9 +338,14 @@ const scrollToAnchor = (id: string) => {
         </div>
 
         <div class="flex items-center gap-3 ml-auto">
-          <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100/80 rounded-xl transition-all duration-200">
+          <a 
+            href="https://github.com/Jeffrey-mu/tools" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100/80 rounded-xl transition-all duration-200 flex items-center justify-center"
+          >
             <Github class="w-5 h-5" />
-          </button>
+          </a>
           <button class="p-2 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 rounded-xl transition-all duration-200">
             <Sun class="w-5 h-5" />
           </button>
