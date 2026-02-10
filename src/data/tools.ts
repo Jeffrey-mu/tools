@@ -86,7 +86,7 @@ export const toolsData: Category[] = [
     bg: 'bg-orange-50',
     tools: [
       { name: '单位换算', desc: '常用物理单位换算', icon: Calculator, path: '/unit', status: '已开发' },
-      { name: '番茄钟', desc: '专注工作倒计时', icon: Clock, path: '/pomodoro', status: '待开发' },
+      { name: '番茄钟', desc: '专注工作倒计时', icon: Clock, path: '/pomodoro', status: '已开发' },
       { name: '待办清单', desc: '简单的本地 Todo List', icon: ListTodo, path: '/todo', status: '待开发' },
       { name: '决策转盘', desc: '随机选择与随机数', icon: Dices, path: '/random', status: '待开发' },
     ]
