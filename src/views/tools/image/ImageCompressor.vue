@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import { Minimize, Upload, Download, Image as ImageIcon, Trash2 } from 'lucide-vue-next'
 import imageCompression from 'browser-image-compression'
 
@@ -62,6 +63,12 @@ const processFiles = async (files: File[]) => {
 }
 
 const compressImage = async (img: CompressedImage) => {
+  // Clean up previous compressed URL if exists
+  if (img.compressedUrl) {
+    URL.revokeObjectURL(img.compressedUrl)
+    img.compressedUrl = ''
+  }
+
   img.status = 'processing'
   
   try {
@@ -83,6 +90,19 @@ const compressImage = async (img: CompressedImage) => {
     img.error = 'Compression failed'
   }
 }
+
+// Recompress all images when options change
+const recompressAll = useDebounceFn(async () => {
+  for (const img of images.value) {
+    if (img.status !== 'error') {
+      await compressImage(img)
+    }
+  }
+}, 500)
+
+watch(quality, () => {
+  recompressAll()
+})
 
 const removeImage = (id: string) => {
   const index = images.value.findIndex(img => img.id === id)
