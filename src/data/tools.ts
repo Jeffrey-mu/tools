@@ -18,7 +18,8 @@ import {
   Calculator,
   ListTodo,
   Dices,
-  FileLock2
+  FileLock2,
+  Video
 } from 'lucide-vue-next'
 
 export interface Tool {
@@ -58,6 +59,7 @@ export const toolsData: Category[] = [
       { name: 'URL 编解码', desc: 'URL 参数 Encode/Decode', icon: Link, path: '/url-encode', status: '已开发' },
       { name: 'URL 参数解析', desc: '解析与重组 URL 参数', icon: Link, path: '/url-parser', status: '已开发' },
       { name: 'MD5 加密', desc: '32位/16位 MD5 哈希计算', icon: FileLock2, path: '/md5', status: '已开发' },
+      { name: '录屏', desc: '屏幕/窗口/标签页录制，支持麦克风与系统音频', icon: Video, path: '/screen-recorder', status: '已开发' },
     ]
   },
   {

@@ -69,6 +69,12 @@ const router = createRouter({
           component: () => import('@/views/tools/dev/Md5Hasher.vue'),
           meta: { title: 'MD5 加密' }
         },
+        {
+          path: 'screen-recorder',
+          name: 'screen-recorder',
+          component: () => import('@/views/tools/dev/ScreenRecorder.vue'),
+          meta: { title: '录屏' }
+        },
         // Text Tools
         {
           path: 'word-count',
