@@ -9,7 +9,7 @@
 
 ## ✨ 功能特性
 
-本项目目前包含 **17+** 个实用工具，分为四大类：
+本项目目前包含 **20+** 个实用工具，分为四大类：
 
 ### 👨‍💻 开发者工具
 *   **JSON 格式化**: 支持美化、压缩、语法校验及错误提示。
@@ -18,6 +18,9 @@
 *   **UUID 生成器**: 批量生成 Version 1 和 Version 4 UUID。
 *   **正则测试**: 实时测试正则表达式匹配，支持常用预设。
 *   **URL 编解码**: 对 URL 参数进行 Encode/Decode 处理。
+*   **URL 参数解析**: 解析 URL 查询参数，支持编辑并重组 URL。
+*   **MD5 加密**: 计算文本 32 位 / 16 位 MD5 哈希。
+*   **录屏**: 屏幕/窗口/标签页录制，支持麦克风与系统音频（取决于浏览器与共享源）。
 
 ### 📝 文本与数据
 *   **字数统计**: 实时统计汉字、单词、字符数及行数。
@@ -47,6 +50,9 @@
     *   [`@vueuse/core`](https://vueuse.org/): 组合式 API 工具集
     *   [`lucide-vue-next`](https://lucide.dev/): 精美图标库
     *   [`codemirror`](https://codemirror.net/): 代码编辑器组件
+    *   [`crypto-js`](https://github.com/brix/crypto-js): 加密/哈希算法工具
+    *   [`diff`](https://github.com/kpdecker/jsdiff): 文本差异对比
+    *   [`qrcode`](https://github.com/soldair/node-qrcode): 二维码生成
     *   [`convert-units`](https://github.com/convert-units/convert-units): 单位换算
     *   [`colord`](https://colord.omgovich.ru/): 颜色处理
     *   [`browser-image-compression`](https://github.com/Donaldcwl/browser-image-compression): 图片压缩
@@ -63,35 +69,43 @@ cd tools
 ### 2. 安装依赖
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. 启动开发服务器
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-访问 `http://localhost:5173` 即可看到运行效果。
+默认访问 `http://localhost:5173` 即可看到运行效果（也可能因端口占用自动切换）。
 
 ### 4. 构建生产版本
 
 ```bash
-npm run build
+pnpm build
 ```
 
 构建产物将输出到 `dist` 目录。
+
+## 🎥 录屏说明
+
+*   **必须是安全上下文**：录屏依赖 `getDisplayMedia`，仅在 `https` 或 `localhost` 下可用。部署后如果用 `http` 或 IP 直连，浏览器可能会禁用录屏。
+*   **系统音频的限制**：Web 端获取“扬声器/系统音频”受浏览器限制，通常在“共享标签页”并勾选“共享音频/标签页音频”时成功率更高；共享“窗口/整个屏幕”时可能拿不到系统音频属于正常现象。
+
+## ☁️ 部署说明
+
+*   **Vercel 刷新 404**：项目包含 `vercel.json`，用于 SPA 路由刷新回退到 `index.html`。
 
 ## 📂 目录结构
 
 ```
 src/
-├── assets/          # 静态资源
 ├── components/      # 公共组件
 ├── data/            # 静态数据（如工具列表配置）
+├── layouts/         # 布局组件
 ├── router/          # 路由配置
 ├── views/           # 页面视图
-│   ├── layout/      # 布局组件
 │   └── tools/       # 具体工具页面
 │       ├── dev/     # 开发者工具
 │       ├── text/    # 文本工具
