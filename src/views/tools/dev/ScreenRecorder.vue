@@ -185,6 +185,15 @@ const createFileName = () => {
   return `screen-recording-${yyyy}${mm}${dd}-${hh}${mi}${ss}.webm`
 }
 
+const getDisplayStream = async (withAudio: boolean) => {
+  return navigator.mediaDevices.getDisplayMedia({
+    video: {
+      frameRate: 30
+    },
+    audio: withAudio
+  })
+}
+
 const startRecording = async () => {
   resetMessages()
   cleanupRecordingArtifacts()
@@ -195,12 +204,19 @@ const startRecording = async () => {
   }
 
   try {
-    const display = await navigator.mediaDevices.getDisplayMedia({
-      video: {
-        frameRate: 30
-      },
-      audio: includeSystemAudio.value
-    })
+    let display: MediaStream
+    try {
+      display = await getDisplayStream(includeSystemAudio.value)
+    } catch (e: any) {
+      const name = String(e?.name || '')
+      const canFallback =
+        includeSystemAudio.value &&
+        (name === 'NotSupportedError' || name === 'OverconstrainedError')
+      if (!canFallback) throw e
+
+      infoMessage.value = '提示：当前共享源/浏览器不支持系统音频，将自动仅录制画面（可继续录制麦克风）'
+      display = await getDisplayStream(false)
+    }
     displayStream.value = display
 
     const videoTrack = display.getVideoTracks()[0]
