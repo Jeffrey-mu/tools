@@ -63,6 +63,12 @@ const router = createRouter({
           component: () => import('@/views/tools/dev/UrlParser.vue'),
           meta: { title: 'URL 参数解析' }
         },
+        {
+          path: 'md5',
+          name: 'md5',
+          component: () => import('@/views/tools/dev/Md5Hasher.vue'),
+          meta: { title: 'MD5 加密' }
+        },
         // Text Tools
         {
           path: 'word-count',

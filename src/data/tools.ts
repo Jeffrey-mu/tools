@@ -17,7 +17,8 @@ import {
   Minimize,
   Calculator,
   ListTodo,
-  Dices
+  Dices,
+  FileLock2
 } from 'lucide-vue-next'
 
 export interface Tool {
@@ -56,6 +57,7 @@ export const toolsData: Category[] = [
       { name: '正则测试', desc: '正则表达式实时测试', icon: Regex, path: '/regex', status: '已开发' },
       { name: 'URL 编解码', desc: 'URL 参数 Encode/Decode', icon: Link, path: '/url-encode', status: '已开发' },
       { name: 'URL 参数解析', desc: '解析与重组 URL 参数', icon: Link, path: '/url-parser', status: '已开发' },
+      { name: 'MD5 加密', desc: '32位/16位 MD5 哈希计算', icon: FileLock2, path: '/md5', status: '已开发' },
     ]
   },
   {
