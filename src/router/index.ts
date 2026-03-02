@@ -57,6 +57,12 @@ const router = createRouter({
           component: () => import('@/views/tools/dev/UrlEncoder.vue'),
           meta: { title: 'URL 编解码' }
         },
+        {
+          path: 'url-parser',
+          name: 'url-parser',
+          component: () => import('@/views/tools/dev/UrlParser.vue'),
+          meta: { title: 'URL 参数解析' }
+        },
         // Text Tools
         {
           path: 'word-count',

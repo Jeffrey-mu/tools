@@ -55,6 +55,7 @@ export const toolsData: Category[] = [
       { name: 'UUID 生成器', desc: '批量生成 Version 1/4 UUID', icon: Fingerprint, path: '/uuid', status: '已开发' },
       { name: '正则测试', desc: '正则表达式实时测试', icon: Regex, path: '/regex', status: '已开发' },
       { name: 'URL 编解码', desc: 'URL 参数 Encode/Decode', icon: Link, path: '/url-encode', status: '已开发' },
+      { name: 'URL 参数解析', desc: '解析与重组 URL 参数', icon: Link, path: '/url-parser', status: '已开发' },
     ]
   },
   {
