@@ -42,12 +42,18 @@ const timerId = ref<number | null>(null)
 
 const { copy, copied } = useClipboard()
 
-const isSupported = computed(() => {
-  const hasMediaDevices = typeof navigator !== 'undefined' && !!navigator.mediaDevices
-  const hasDisplay = hasMediaDevices && typeof navigator.mediaDevices.getDisplayMedia === 'function'
-  const hasRecorder = typeof MediaRecorder !== 'undefined'
-  return hasDisplay && hasRecorder
+const secureContext = computed(() => typeof window !== 'undefined' && window.isSecureContext === true)
+const hasMediaDevices = computed(() => typeof navigator !== 'undefined' && !!navigator.mediaDevices)
+const hasGetDisplayMedia = computed(
+  () => hasMediaDevices.value && typeof navigator.mediaDevices.getDisplayMedia === 'function'
+)
+const hasMediaRecorder = computed(() => typeof MediaRecorder !== 'undefined')
+const currentOrigin = computed(() => {
+  if (typeof window === 'undefined') return ''
+  return window.location?.origin || ''
 })
+
+const isSupported = computed(() => secureContext.value && hasGetDisplayMedia.value && hasMediaRecorder.value)
 
 const canStart = computed(() => isSupported.value && status.value === 'idle')
 const canPause = computed(() => status.value === 'recording' && !!mediaRecorder.value)
@@ -406,7 +412,14 @@ onBeforeUnmount(async () => {
     </div>
 
     <div v-if="!isSupported" class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:border-red-800/40 dark:bg-red-900/20 dark:text-red-300">
-      当前浏览器不支持录屏：需要 getDisplayMedia 与 MediaRecorder。
+      <div class="font-medium">当前环境不支持录屏</div>
+      <div class="mt-1 text-sm opacity-90">需要安全上下文（HTTPS 或 localhost）并且支持 getDisplayMedia 与 MediaRecorder。</div>
+      <div class="mt-3 text-sm space-y-1">
+        <div>当前来源：{{ currentOrigin || '-' }}</div>
+        <div>安全上下文：{{ secureContext ? '是' : '否（HTTP / 非 localhost 会被浏览器禁用）' }}</div>
+        <div>getDisplayMedia：{{ hasGetDisplayMedia ? '支持' : '不支持' }}</div>
+        <div>MediaRecorder：{{ hasMediaRecorder ? '支持' : '不支持（常见于 iOS Safari / 部分内置浏览器）' }}</div>
+      </div>
     </div>
 
     <div v-if="errorMessage" class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:border-red-800/40 dark:bg-red-900/20 dark:text-red-300">
