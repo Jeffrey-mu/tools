@@ -136,14 +136,14 @@ const clearAll = () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4 w-full min-w-0">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 text-gray-700 font-medium">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
         <Minimize class="w-5 h-5 text-purple-500" />
         图片压缩
       </div>
       
       <div class="flex items-center gap-4 w-full sm:w-auto">
-        <div class="flex items-center gap-2 text-sm text-gray-600">
+        <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
           <span>质量: {{ Math.round(quality * 100) }}%</span>
           <input 
             v-model.number="quality" 
@@ -158,7 +158,7 @@ const clearAll = () => {
         <button 
           v-if="images.length > 0"
           @click="clearAll"
-          class="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-2 ml-auto sm:ml-0"
+          class="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-2 ml-auto sm:ml-0"
         >
           <Trash2 class="w-4 h-4" />
           清空
@@ -168,23 +168,23 @@ const clearAll = () => {
 
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
       <!-- Upload Area / List -->
-      <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+      <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden">
         
         <!-- Drop Zone (when empty) -->
         <div 
           v-if="images.length === 0"
-          class="flex-1 flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 rounded-xl m-4 transition-colors"
-          :class="{ 'border-purple-500 bg-purple-50': isDragging }"
+          class="flex-1 flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl m-4 transition-colors"
+          :class="{ 'border-purple-500 bg-purple-50 dark:bg-purple-900/20': isDragging }"
           @dragenter.prevent="isDragging = true"
           @dragleave.prevent="isDragging = false"
           @dragover.prevent
           @drop.prevent="handleDrop"
         >
-          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 text-purple-600">
+          <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4 text-purple-600">
             <Upload class="w-8 h-8" />
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">拖拽图片到这里</h3>
-          <p class="text-gray-500 mb-6">支持 JPG, PNG, WebP</p>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">拖拽图片到这里</h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-6">支持 JPG, PNG, WebP</p>
           
           <label class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl cursor-pointer transition-colors font-medium flex items-center gap-2">
             <ImageIcon class="w-4 h-4" />
@@ -197,7 +197,7 @@ const clearAll = () => {
         <div v-else class="flex-1 overflow-y-auto p-4 space-y-4">
           <!-- Add More Button -->
           <div class="flex justify-end mb-2">
-            <label class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors text-sm font-medium flex items-center gap-2">
+            <label class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg cursor-pointer transition-colors text-sm font-medium flex items-center gap-2">
               <Upload class="w-4 h-4" />
               添加更多
               <input type="file" multiple accept="image/*" class="hidden" @change="handleFileSelect">
@@ -207,24 +207,24 @@ const clearAll = () => {
           <div 
             v-for="img in images" 
             :key="img.id"
-            class="bg-gray-50 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center border border-gray-200"
+            class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center border border-gray-200 dark:border-gray-600"
           >
             <!-- Preview -->
-            <div class="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+            <div class="w-20 h-20 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden shrink-0">
               <img :src="img.originalUrl" class="w-full h-full object-cover" />
             </div>
 
             <!-- Info -->
             <div class="flex-1 min-w-0 w-full text-center sm:text-left">
-              <div class="font-medium text-gray-900 truncate mb-1">{{ img.originalFile.name }}</div>
+              <div class="font-medium text-gray-900 dark:text-gray-100 truncate mb-1">{{ img.originalFile.name }}</div>
               <div class="flex items-center justify-center sm:justify-start gap-4 text-sm">
-                <div class="text-gray-500">
-                  原始: <span class="font-mono text-gray-700">{{ formatSize(img.originalFile.size) }}</span>
+                <div class="text-gray-500 dark:text-gray-400">
+                  原始: <span class="font-mono text-gray-700 dark:text-gray-300">{{ formatSize(img.originalFile.size) }}</span>
                 </div>
-                <div v-if="img.status === 'done'" class="text-gray-500">
-                  压缩后: <span class="font-mono text-green-600 font-bold">{{ formatSize(img.compressedFile?.size || 0) }}</span>
+                <div v-if="img.status === 'done'" class="text-gray-500 dark:text-gray-400">
+                  压缩后: <span class="font-mono text-green-600 dark:text-green-400 font-bold">{{ formatSize(img.compressedFile?.size || 0) }}</span>
                 </div>
-                <div v-if="img.status === 'done'" class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">
+                <div v-if="img.status === 'done'" class="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium">
                   -{{ Math.round((1 - (img.compressedFile?.size || 0) / img.originalFile.size) * 100) }}%
                 </div>
               </div>
@@ -232,23 +232,23 @@ const clearAll = () => {
 
             <!-- Actions -->
             <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
-              <div v-if="img.status === 'processing'" class="text-purple-600 text-sm font-medium animate-pulse">
+              <div v-if="img.status === 'processing'" class="text-purple-600 dark:text-purple-400 text-sm font-medium animate-pulse">
                 处理中...
               </div>
-              <div v-else-if="img.status === 'error'" class="text-red-500 text-sm font-medium">
+              <div v-else-if="img.status === 'error'" class="text-red-500 dark:text-red-400 text-sm font-medium">
                 失败
               </div>
               <button 
                 v-if="img.status === 'done'"
                 @click="downloadImage(img)"
-                class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                class="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                 title="下载"
               >
                 <Download class="w-5 h-5" />
               </button>
               <button 
                 @click="removeImage(img.id)"
-                class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                class="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                 title="移除"
               >
                 <Trash2 class="w-5 h-5" />

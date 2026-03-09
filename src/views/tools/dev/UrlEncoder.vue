@@ -52,28 +52,28 @@ const clear = () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex items-center gap-2 text-gray-700 font-medium">
+          <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
             <Link class="w-5 h-5 text-blue-500" />
             URL 编解码
           </div>
           
-          <div class="h-6 w-px bg-gray-200 hidden sm:block"></div>
+          <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
           
-          <div class="flex bg-gray-100 p-1 rounded-lg">
+          <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
             <button
               @click="mode = 'component'"
               class="px-3 py-1 text-xs font-medium rounded-md transition-all"
-              :class="mode === 'component' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+              :class="mode === 'component' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
             >
               Component
             </button>
             <button
               @click="mode = 'uri'"
               class="px-3 py-1 text-xs font-medium rounded-md transition-all"
-              :class="mode === 'uri' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+              :class="mode === 'uri' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
               title="encodeURI (不转义 :/?#& 等)"
             >
               Whole URI
@@ -84,26 +84,26 @@ const clear = () => {
         <div class="flex items-center gap-2">
           <button 
             @click="encode"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm shadow-blue-200"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm shadow-blue-200 dark:shadow-none"
           >
             编码 (Encode)
           </button>
           <button 
             @click="decode"
-            class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+            class="px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-200 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
           >
             解码 (Decode)
           </button>
           <button 
             @click="swap"
-            class="p-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
+            class="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title="交换输入输出"
           >
             <ArrowRightLeft class="w-4 h-4" />
           </button>
           <button 
             @click="clear"
-            class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            class="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
             title="清空"
           >
             <Trash2 class="w-4 h-4" />
@@ -116,7 +116,7 @@ const clear = () => {
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
       <!-- Input -->
       <div class="flex flex-col gap-2 h-full min-h-0">
-        <label class="text-sm font-medium text-gray-500 px-1">输入</label>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">输入</label>
         <div class="flex-1 min-h-0 relative">
           <CodeEditor
             v-model="input"
@@ -129,12 +129,12 @@ const clear = () => {
       <!-- Output -->
       <div class="flex flex-col gap-2 h-full min-h-0">
         <div class="flex items-center justify-between px-1">
-          <label class="text-sm font-medium text-gray-500">结果</label>
+          <label class="text-sm font-medium text-gray-500 dark:text-gray-400">结果</label>
           <button 
             v-if="output"
             @click="copy(output)"
             class="text-xs flex items-center gap-1 transition-colors"
-            :class="copied ? 'text-green-600' : 'text-blue-600 hover:text-blue-700'"
+            :class="copied ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
           >
             <Copy class="w-3 h-3" />
             {{ copied ? '已复制' : '复制结果' }}
@@ -146,11 +146,11 @@ const clear = () => {
             readonly
             placeholder="结果将显示在这里..."
             class="h-full"
-            :class="{ '!border-red-300 !bg-red-50': error }"
+            :class="{ '!border-red-300 !bg-red-50 dark:!border-red-800 dark:!bg-red-900/20': error }"
           />
           <div 
             v-if="error"
-            class="absolute bottom-4 left-4 right-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg border border-red-200 shadow-sm z-10"
+            class="absolute bottom-4 left-4 right-4 p-3 bg-red-100 dark:bg-red-900/80 text-red-700 dark:text-red-200 text-sm rounded-lg border border-red-200 dark:border-red-800 shadow-sm z-10"
           >
             <span class="font-bold">错误:</span> {{ error }}
           </div>

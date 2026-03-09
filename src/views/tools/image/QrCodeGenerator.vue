@@ -64,8 +64,8 @@ const download = () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4 w-full min-w-0">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-      <div class="flex items-center gap-2 text-gray-700 font-medium">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
         <QrCode class="w-5 h-5 text-purple-500" />
         二维码生成器
       </div>
@@ -73,7 +73,7 @@ const download = () => {
       <button 
         @click="download"
         :disabled="!qrUrl"
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
       >
         <Download class="w-4 h-4" />
         下载图片
@@ -82,13 +82,13 @@ const download = () => {
 
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-y-auto lg:overflow-hidden">
       <!-- Config Panel -->
-      <div class="w-full lg:w-80 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-6 overflow-y-auto">
+      <div class="w-full lg:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col gap-6 overflow-y-auto">
         <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">内容</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">内容</label>
           <textarea 
             v-model="text" 
             rows="4"
-            class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
+            class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400"
             placeholder="输入链接或文本..."
           ></textarea>
         </div>
@@ -96,29 +96,29 @@ const download = () => {
         <div class="space-y-4">
           <div class="space-y-2">
             <div class="flex justify-between">
-              <label class="text-sm font-medium text-gray-700">尺寸 (px)</label>
-              <span class="text-xs text-gray-500">{{ size }}x{{ size }}</span>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">尺寸 (px)</label>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ size }}x{{ size }}</span>
             </div>
             <input v-model.number="size" type="range" min="100" max="1000" step="10" class="w-full accent-purple-600">
           </div>
 
           <div class="space-y-2">
             <div class="flex justify-between">
-              <label class="text-sm font-medium text-gray-700">边距</label>
-              <span class="text-xs text-gray-500">{{ margin }}</span>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">边距</label>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ margin }}</span>
             </div>
             <input v-model.number="margin" type="range" min="0" max="10" class="w-full accent-purple-600">
           </div>
 
           <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">容错率</label>
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">容错率</label>
             <div class="grid grid-cols-4 gap-2">
               <button 
                 v-for="level in ['L', 'M', 'Q', 'H']" 
                 :key="level"
                 @click="errorCorrectionLevel = level as any"
                 class="px-2 py-1.5 text-sm rounded-lg border transition-all"
-                :class="errorCorrectionLevel === level ? 'bg-purple-50 border-purple-200 text-purple-700 font-medium' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'"
+                :class="errorCorrectionLevel === level ? 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300 font-medium' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
               >
                 {{ level }}
               </button>
@@ -127,17 +127,17 @@ const download = () => {
 
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-700">前景色</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">前景色</label>
               <div class="flex items-center gap-2">
                 <input v-model="darkColor" type="color" class="w-8 h-8 rounded border-0 p-0 overflow-hidden cursor-pointer">
-                <span class="text-xs text-gray-500 font-mono">{{ darkColor }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ darkColor }}</span>
               </div>
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-700">背景色</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">背景色</label>
               <div class="flex items-center gap-2">
                 <input v-model="lightColor" type="color" class="w-8 h-8 rounded border-0 p-0 overflow-hidden cursor-pointer">
-                <span class="text-xs text-gray-500 font-mono">{{ lightColor }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ lightColor }}</span>
               </div>
             </div>
           </div>
@@ -145,13 +145,13 @@ const download = () => {
       </div>
 
       <!-- Preview Panel -->
-      <div class="flex-1 bg-gray-50 rounded-xl shadow-inner border border-gray-200 flex items-center justify-center p-8 relative overflow-hidden">
+      <div class="flex-1 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner border border-gray-200 dark:border-gray-700 flex items-center justify-center p-8 relative overflow-hidden">
         <div class="absolute inset-0 pattern-grid-lg opacity-5 pointer-events-none"></div>
         
         <div v-if="qrUrl" class="bg-white p-4 shadow-lg rounded-xl max-w-full max-h-full overflow-auto flex items-center justify-center">
           <img :src="qrUrl" alt="QR Code" class="max-w-full h-auto object-contain" />
         </div>
-        <div v-else class="text-gray-400 flex flex-col items-center gap-2">
+        <div v-else class="text-gray-400 dark:text-gray-500 flex flex-col items-center gap-2">
           <QrCode class="w-12 h-12 opacity-20" />
           <span>输入内容以生成二维码</span>
         </div>

@@ -69,8 +69,8 @@ const strengthText = computed(() => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4 w-full min-w-0">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-      <div class="flex items-center gap-2 text-gray-700 font-medium">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
         <KeyRound class="w-5 h-5 text-emerald-500" />
         密码生成器
       </div>
@@ -78,44 +78,44 @@ const strengthText = computed(() => {
 
     <div class="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
       <!-- Config Panel -->
-      <div class="w-full md:w-80 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-8">
+      <div class="w-full md:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-8">
         <!-- Length -->
         <div class="space-y-3">
           <div class="flex justify-between items-center">
-            <label class="text-sm font-medium text-gray-700">密码长度</label>
-            <span class="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ length }}</span>
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-200">密码长度</label>
+            <span class="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">{{ length }}</span>
           </div>
           <input 
             v-model.number="length" 
             type="range" 
             min="4" 
             max="64" 
-            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
           >
         </div>
         
         <!-- Options -->
         <div class="space-y-4">
-          <label class="text-sm font-medium text-gray-700 block">字符选项</label>
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-200 block">字符选项</label>
           
-          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-            <input v-model="includeUppercase" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-            <span class="text-sm text-gray-700">大写字母 (A-Z)</span>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <input v-model="includeUppercase" type="checkbox" class="w-4 h-4 text-blue-600 dark:text-blue-500 rounded focus:ring-blue-500">
+            <span class="text-sm text-gray-700 dark:text-gray-200">大写字母 (A-Z)</span>
           </label>
           
-          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-            <input v-model="includeLowercase" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-            <span class="text-sm text-gray-700">小写字母 (a-z)</span>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <input v-model="includeLowercase" type="checkbox" class="w-4 h-4 text-blue-600 dark:text-blue-500 rounded focus:ring-blue-500">
+            <span class="text-sm text-gray-700 dark:text-gray-200">小写字母 (a-z)</span>
           </label>
           
-          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-            <input v-model="includeNumbers" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-            <span class="text-sm text-gray-700">数字 (0-9)</span>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <input v-model="includeNumbers" type="checkbox" class="w-4 h-4 text-blue-600 dark:text-blue-500 rounded focus:ring-blue-500">
+            <span class="text-sm text-gray-700 dark:text-gray-200">数字 (0-9)</span>
           </label>
           
-          <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-            <input v-model="includeSymbols" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-            <span class="text-sm text-gray-700">特殊符号 (!@#$)</span>
+          <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <input v-model="includeSymbols" type="checkbox" class="w-4 h-4 text-blue-600 dark:text-blue-500 rounded focus:ring-blue-500">
+            <span class="text-sm text-gray-700 dark:text-gray-200">特殊符号 (!@#$)</span>
           </label>
         </div>
 
@@ -129,23 +129,23 @@ const strengthText = computed(() => {
       </div>
 
       <!-- Result Panel -->
-      <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-8 flex flex-col items-center justify-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-gray-50/50 pattern-grid-lg opacity-20"></div>
+      <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 flex flex-col items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gray-50/50 dark:bg-gray-900/30 pattern-grid-lg opacity-20"></div>
         
         <div class="relative z-10 w-full max-w-2xl space-y-8 text-center">
           <div class="space-y-2">
-            <div class="text-sm text-gray-500 font-medium uppercase tracking-wider">Generated Password</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Generated Password</div>
             <div 
-              class="relative group bg-white border-2 border-gray-100 hover:border-blue-200 rounded-2xl p-6 shadow-sm transition-all duration-300"
-              :class="{ 'ring-4 ring-blue-50 border-blue-300': copied }"
+              class="relative group bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-500/50 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all duration-300"
+              :class="{ 'ring-4 ring-blue-50 dark:ring-blue-900/30 border-blue-300 dark:border-blue-600': copied }"
             >
-              <div class="font-mono text-3xl md:text-4xl text-gray-800 break-all leading-tight">
+              <div class="font-mono text-3xl md:text-4xl text-gray-800 dark:text-gray-100 break-all leading-tight">
                 {{ password || '...' }}
               </div>
               
               <button 
                 @click="copy(password)"
-                class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 bg-white rounded-lg shadow-sm border border-gray-100 opacity-0 group-hover:opacity-100 transition-all"
+                class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-gray-900 rounded-lg shadow-sm dark:shadow-none border border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-all"
                 title="复制密码"
               >
                 <Copy class="w-5 h-5" />
@@ -153,9 +153,9 @@ const strengthText = computed(() => {
             </div>
             
             <div class="flex items-center justify-center gap-2 text-sm">
-              <span class="text-gray-400">强度:</span>
+              <span class="text-gray-400 dark:text-gray-500">强度:</span>
               <div class="flex gap-1">
-                <div v-for="i in 5" :key="i" class="w-8 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                <div v-for="i in 5" :key="i" class="w-8 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
                   <div 
                     class="h-full transition-all duration-500" 
                     :class="i <= strength ? strengthColor : 'bg-transparent'"

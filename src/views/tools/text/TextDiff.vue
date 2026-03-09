@@ -73,37 +73,37 @@ const clear = () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4 w-full min-w-0">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 text-gray-700 font-medium">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
         <ArrowLeftRight class="w-5 h-5 text-emerald-500" />
         文本 Diff 对比
       </div>
       
       <div class="flex items-center gap-4">
         <!-- Mode Toggle -->
-        <div class="flex bg-gray-100 p-1 rounded-lg">
+        <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
           <button 
             @click="mode = 'lines'"
             class="px-3 py-1 text-sm font-medium rounded-md transition-all"
-            :class="mode === 'lines' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="mode === 'lines' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
           >
             按行
           </button>
           <button 
             @click="mode = 'chars'"
             class="px-3 py-1 text-sm font-medium rounded-md transition-all"
-            :class="mode === 'chars' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="mode === 'chars' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
           >
             按字符
           </button>
         </div>
 
         <!-- View Toggle (Only for Lines mode) -->
-        <div v-if="mode === 'lines'" class="flex bg-gray-100 p-1 rounded-lg">
+        <div v-if="mode === 'lines'" class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
           <button 
             @click="viewType = 'unified'"
             class="p-1.5 rounded-md transition-all"
-            :class="viewType === 'unified' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="viewType === 'unified' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
             title="合并视图"
           >
             <Merge class="w-4 h-4" />
@@ -111,7 +111,7 @@ const clear = () => {
           <button 
             @click="viewType = 'split'"
             class="p-1.5 rounded-md transition-all"
-            :class="viewType === 'split' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="viewType === 'split' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
             title="左右分栏"
           >
             <Split class="w-4 h-4" />
@@ -120,7 +120,7 @@ const clear = () => {
 
         <button 
           @click="clear"
-          class="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-2"
+          class="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-2"
         >
           <Trash2 class="w-4 h-4" />
           清空
@@ -130,42 +130,42 @@ const clear = () => {
 
     <!-- Inputs -->
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 h-1/3">
-      <div class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-2 border-b border-gray-100 text-sm font-medium text-gray-500 bg-gray-50 rounded-t-xl px-4">
+      <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="p-2 border-b border-gray-100 dark:border-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 rounded-t-xl px-4">
           原始内容 (Old)
         </div>
         <textarea
           v-model="oldText"
-          class="flex-1 w-full p-4 resize-none border-none focus:ring-0 text-gray-800 font-mono text-sm leading-6"
+          class="flex-1 w-full p-4 resize-none border-none focus:ring-0 text-gray-800 dark:text-gray-100 font-mono text-sm leading-6 bg-transparent"
           placeholder="Paste original text here..."
         ></textarea>
       </div>
-      <div class="flex-1 flex flex-col bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-2 border-b border-gray-100 text-sm font-medium text-gray-500 bg-gray-50 rounded-t-xl px-4">
+      <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="p-2 border-b border-gray-100 dark:border-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 rounded-t-xl px-4">
           新内容 (New)
         </div>
         <textarea
           v-model="newText"
-          class="flex-1 w-full p-4 resize-none border-none focus:ring-0 text-gray-800 font-mono text-sm leading-6"
+          class="flex-1 w-full p-4 resize-none border-none focus:ring-0 text-gray-800 dark:text-gray-100 font-mono text-sm leading-6 bg-transparent"
           placeholder="Paste new text here..."
         ></textarea>
       </div>
     </div>
 
     <!-- Result -->
-    <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0 overflow-hidden">
-      <div class="p-2 border-b border-gray-100 text-sm font-medium text-gray-500 bg-gray-50 px-4">
+    <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col min-h-0 overflow-hidden">
+      <div class="p-2 border-b border-gray-100 dark:border-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 px-4">
         对比结果
       </div>
       
-      <div class="flex-1 overflow-auto p-4 font-mono text-sm">
+      <div class="flex-1 overflow-auto p-4 font-mono text-sm text-gray-800 dark:text-gray-100">
         <!-- Unified View -->
         <pre v-if="viewType === 'unified' || mode === 'chars'" class="whitespace-pre-wrap break-all"><span 
             v-for="(part, index) in diffResult" 
             :key="index"
             :class="{
-              'bg-green-100 text-green-800': part.added,
-              'bg-red-100 text-red-800 decoration-red-500': part.removed,
+              'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200': part.added,
+              'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 decoration-red-500': part.removed,
               'line-through opacity-70': part.removed && mode === 'chars'
             }"
           >{{ part.value }}</span></pre>
@@ -173,21 +173,21 @@ const clear = () => {
         <!-- Split View (Only for Lines) -->
         <div v-else-if="viewType === 'split' && splitDiff" class="flex min-w-full">
           <!-- Left (Old) -->
-          <div class="w-1/2 border-r border-gray-200 select-text">
+          <div class="w-1/2 border-r border-gray-200 dark:border-gray-700 select-text">
             <div 
               v-for="(row, idx) in splitDiff.left" 
               :key="'l-'+idx"
               class="flex"
               :class="{
-                'bg-red-50': row.type === 'removed',
-                'bg-gray-50/50': row.type === 'empty'
+                'bg-red-50 dark:bg-red-900/20': row.type === 'removed',
+                'bg-gray-50/50 dark:bg-gray-900/30': row.type === 'empty'
               }"
             >
-              <div class="w-10 text-right pr-2 text-gray-400 select-none bg-gray-50 border-r border-gray-100 text-xs py-0.5">
+              <div class="w-10 text-right pr-2 text-gray-400 dark:text-gray-500 select-none bg-gray-50 dark:bg-gray-900 border-r border-gray-100 dark:border-gray-700 text-xs py-0.5">
                 {{ row.lineNum }}
               </div>
               <div class="flex-1 px-2 whitespace-pre-wrap break-all py-0.5">
-                <span :class="{'text-red-700': row.type === 'removed'}">{{ row.value }}</span>
+                <span :class="{'text-red-700 dark:text-red-300': row.type === 'removed'}">{{ row.value }}</span>
               </div>
             </div>
           </div>
@@ -199,15 +199,15 @@ const clear = () => {
               :key="'r-'+idx"
               class="flex"
               :class="{
-                'bg-green-50': row.type === 'added',
-                'bg-gray-50/50': row.type === 'empty'
+                'bg-green-50 dark:bg-green-900/20': row.type === 'added',
+                'bg-gray-50/50 dark:bg-gray-900/30': row.type === 'empty'
               }"
             >
-              <div class="w-10 text-right pr-2 text-gray-400 select-none bg-gray-50 border-r border-gray-100 text-xs py-0.5">
+              <div class="w-10 text-right pr-2 text-gray-400 dark:text-gray-500 select-none bg-gray-50 dark:bg-gray-900 border-r border-gray-100 dark:border-gray-700 text-xs py-0.5">
                 {{ row.lineNum }}
               </div>
               <div class="flex-1 px-2 whitespace-pre-wrap break-all py-0.5">
-                <span :class="{'text-green-700': row.type === 'added'}">{{ row.value }}</span>
+                <span :class="{'text-green-700 dark:text-green-300': row.type === 'added'}">{{ row.value }}</span>
               </div>
             </div>
           </div>
@@ -236,5 +236,13 @@ textarea::-webkit-scrollbar-thumb,
 textarea::-webkit-scrollbar-thumb:hover,
 .overflow-auto::-webkit-scrollbar-thumb:hover {
   background-color: #d1d5db;
+}
+.dark textarea::-webkit-scrollbar-thumb,
+.dark .overflow-auto::-webkit-scrollbar-thumb {
+  background-color: #374151;
+}
+.dark textarea::-webkit-scrollbar-thumb:hover,
+.dark .overflow-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #4b5563;
 }
 </style>

@@ -58,16 +58,16 @@ watch([input, indent], () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4">
     <!-- Toolbar -->
-    <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
       <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 text-gray-700 font-medium">
+        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
           <FileJson class="w-5 h-5 text-blue-500" />
           JSON 格式化
         </div>
-        <div class="h-6 w-px bg-gray-200"></div>
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
         <select 
           v-model="indent"
-          class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
+          class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
         >
           <option :value="2">2 空格缩进</option>
           <option :value="4">4 空格缩进</option>
@@ -78,14 +78,14 @@ watch([input, indent], () => {
       <div class="flex items-center gap-2">
         <button 
           @click="compress"
-          class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+          class="px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
         >
           <ArrowRightLeft class="w-4 h-4" />
           压缩
         </button>
         <button 
           @click="clear"
-          class="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-2"
+          class="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-2"
         >
           <Trash2 class="w-4 h-4" />
           清空
@@ -97,7 +97,7 @@ watch([input, indent], () => {
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
       <!-- Input -->
       <div class="flex flex-col gap-2 h-full min-h-0">
-        <label class="text-sm font-medium text-gray-500 px-1">输入 JSON</label>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">输入 JSON</label>
         <div class="flex-1 min-h-0 relative">
           <CodeEditor
             v-model="input"
@@ -110,12 +110,12 @@ watch([input, indent], () => {
       <!-- Output -->
       <div class="flex flex-col gap-2 h-full min-h-0">
         <div class="flex items-center justify-between px-1">
-          <label class="text-sm font-medium text-gray-500">格式化结果</label>
+          <label class="text-sm font-medium text-gray-500 dark:text-gray-400">格式化结果</label>
           <button 
             v-if="output"
             @click="copy(output)"
             class="text-xs flex items-center gap-1 transition-colors"
-            :class="copied ? 'text-green-600' : 'text-blue-600 hover:text-blue-700'"
+            :class="copied ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
           >
             <Copy class="w-3 h-3" />
             {{ copied ? '已复制' : '复制结果' }}
@@ -127,11 +127,11 @@ watch([input, indent], () => {
             readonly
             placeholder="结果将显示在这里..."
             class="h-full"
-            :class="{ '!border-red-300 !bg-red-50': error }"
+            :class="{ '!border-red-300 !bg-red-50 dark:!bg-red-900/10 dark:!border-red-800': error }"
           />
           <div 
             v-if="error"
-            class="absolute bottom-4 left-4 right-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg border border-red-200 shadow-sm z-10"
+            class="absolute bottom-4 left-4 right-4 p-3 bg-red-100 dark:bg-red-900/80 text-red-700 dark:text-red-200 text-sm rounded-lg border border-red-200 dark:border-red-800 shadow-sm z-10"
           >
             <span class="font-bold">错误:</span> {{ error }}
           </div>

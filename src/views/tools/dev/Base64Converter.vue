@@ -46,25 +46,25 @@ watch([input, mode], () => {
 <template>
   <div class="h-[calc(100vh-8rem)] flex flex-col gap-4">
     <!-- Toolbar -->
-    <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
       <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 text-gray-700 font-medium">
+        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
           <Binary class="w-5 h-5 text-blue-500" />
           Base64 编解码
         </div>
-        <div class="h-6 w-px bg-gray-200"></div>
-        <div class="flex bg-gray-100 p-1 rounded-lg">
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
+        <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
           <button 
             @click="mode = 'encode'"
             class="px-4 py-1.5 text-sm font-medium rounded-md transition-all"
-            :class="mode === 'encode' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="mode === 'encode' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
           >
             编码 (Encode)
           </button>
           <button 
             @click="mode = 'decode'"
             class="px-4 py-1.5 text-sm font-medium rounded-md transition-all"
-            :class="mode === 'decode' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            :class="mode === 'decode' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
           >
             解码 (Decode)
           </button>
@@ -74,14 +74,14 @@ watch([input, mode], () => {
       <div class="flex items-center gap-2">
         <button 
           @click="toggleMode"
-          class="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+          class="px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
         >
           <ArrowRightLeft class="w-4 h-4" />
           交换
         </button>
         <button 
           @click="clear"
-          class="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-2"
+          class="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-2"
         >
           <Trash2 class="w-4 h-4" />
           清空
@@ -93,12 +93,12 @@ watch([input, mode], () => {
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
       <!-- Input -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-500 px-1">
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
           {{ mode === 'encode' ? '明文输入' : 'Base64 输入' }}
         </label>
         <textarea
           v-model="input"
-          class="flex-1 w-full p-4 font-mono text-sm bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none outline-none"
+          class="flex-1 w-full p-4 font-mono text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none outline-none"
           :placeholder="mode === 'encode' ? '输入要编码的文本...' : '输入要解码的 Base64 字符串...'"
         ></textarea>
       </div>
@@ -106,14 +106,14 @@ watch([input, mode], () => {
       <!-- Output -->
       <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between px-1">
-          <label class="text-sm font-medium text-gray-500">
+          <label class="text-sm font-medium text-gray-500 dark:text-gray-400">
             {{ mode === 'encode' ? 'Base64 结果' : '明文结果' }}
           </label>
           <button 
             v-if="output"
             @click="copy(output)"
             class="text-xs flex items-center gap-1 transition-colors"
-            :class="copied ? 'text-green-600' : 'text-blue-600 hover:text-blue-700'"
+            :class="copied ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
           >
             <Copy class="w-3 h-3" />
             {{ copied ? '已复制' : '复制结果' }}
@@ -123,7 +123,7 @@ watch([input, mode], () => {
           <textarea
             readonly
             :value="output"
-            class="absolute inset-0 w-full h-full p-4 font-mono text-sm bg-gray-50 border border-gray-200 rounded-xl resize-none outline-none text-gray-800"
+            class="absolute inset-0 w-full h-full p-4 font-mono text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl resize-none outline-none text-gray-800 dark:text-gray-200"
             placeholder="结果将显示在这里..."
           ></textarea>
         </div>

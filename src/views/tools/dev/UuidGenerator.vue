@@ -46,23 +46,23 @@ generate()
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
     <!-- Toolbar -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex items-center gap-2 text-gray-700 font-medium">
+          <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
             <Fingerprint class="w-5 h-5 text-blue-500" />
             UUID 生成器
           </div>
-          <div class="h-6 w-px bg-gray-200 hidden sm:block"></div>
+          <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
         </div>
 
         <div class="flex flex-wrap items-center gap-4">
           <!-- Count -->
           <div class="flex items-center gap-2">
-            <label class="text-sm text-gray-600">数量:</label>
+            <label class="text-sm text-gray-600 dark:text-gray-300">数量:</label>
             <select 
               v-model="count"
-              class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
+              class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
             >
               <option :value="1">1</option>
               <option :value="5">5</option>
@@ -74,10 +74,10 @@ generate()
 
           <!-- Version -->
           <div class="flex items-center gap-2">
-            <label class="text-sm text-gray-600">版本:</label>
+            <label class="text-sm text-gray-600 dark:text-gray-300">版本:</label>
             <select 
               v-model="version"
-              class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
+              class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
             >
               <option value="v4">Version 4 (随机)</option>
               <option value="v1">Version 1 (时间戳)</option>
@@ -85,13 +85,13 @@ generate()
           </div>
 
           <!-- Options -->
-          <div class="flex items-center gap-4 border-l border-gray-200 pl-4">
-            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-              <input type="checkbox" v-model="hyphens" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+          <div class="flex items-center gap-4 border-l border-gray-200 dark:border-gray-700 pl-4">
+            <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+              <input type="checkbox" v-model="hyphens" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500">
               连字符
             </label>
-            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-              <input type="checkbox" v-model="uppercase" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+              <input type="checkbox" v-model="uppercase" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500">
               大写
             </label>
           </div>
@@ -100,14 +100,14 @@ generate()
         <div class="flex items-center gap-2 ml-auto">
           <button 
             @click="generate"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 shadow-sm shadow-blue-200"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 shadow-sm shadow-blue-200 dark:shadow-none"
           >
             <RefreshCw class="w-4 h-4" />
             生成
           </button>
           <button 
             @click="clear"
-            class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            class="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
             title="清空"
           >
             <Trash2 class="w-4 h-4" />
@@ -117,31 +117,31 @@ generate()
     </div>
 
     <!-- Results -->
-    <div v-if="generatedUuids.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="p-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-        <span class="text-xs font-medium text-gray-500 uppercase tracking-wider ml-2">
+    <div v-if="generatedUuids.length > 0" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="p-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-2">
           生成的 UUID ({{ generatedUuids.length }})
         </span>
         <button 
           @click="copyAll"
           class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium"
-          :class="copied ? 'bg-green-100 text-green-700' : 'bg-white text-gray-600 hover:text-blue-600 hover:bg-blue-50 border border-gray-200'"
+          :class="copied ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-700'"
         >
           <Copy class="w-3.5 h-3.5" />
           {{ copied ? '已复制全部' : '复制全部' }}
         </button>
       </div>
       
-      <div class="max-h-[600px] overflow-y-auto divide-y divide-gray-50">
+      <div class="max-h-[600px] overflow-y-auto divide-y divide-gray-50 dark:divide-gray-700">
         <div 
           v-for="(uuid, index) in generatedUuids" 
           :key="index"
-          class="group flex items-center justify-between p-3 hover:bg-blue-50/50 transition-colors"
+          class="group flex items-center justify-between p-3 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
         >
-          <code class="font-mono text-gray-700 text-sm sm:text-base select-all">{{ uuid }}</code>
+          <code class="font-mono text-gray-700 dark:text-gray-200 text-sm sm:text-base select-all">{{ uuid }}</code>
           <button 
             @click="copy(uuid)"
-            class="p-1.5 text-gray-300 hover:text-blue-600 hover:bg-blue-100 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+            class="p-1.5 text-gray-300 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
             title="复制"
           >
             <Copy class="w-4 h-4" />
@@ -150,9 +150,9 @@ generate()
       </div>
     </div>
     
-    <div v-else class="text-center py-12 bg-white rounded-xl border border-gray-100 border-dashed">
-      <Fingerprint class="w-12 h-12 text-gray-300 mx-auto mb-3" />
-      <p class="text-gray-500">点击生成按钮开始生成 UUID</p>
+    <div v-else class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 border-dashed">
+      <Fingerprint class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+      <p class="text-gray-500 dark:text-gray-400">点击生成按钮开始生成 UUID</p>
     </div>
   </div>
 </template>

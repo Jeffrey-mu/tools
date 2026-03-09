@@ -5,6 +5,7 @@ import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
+import { useDark } from '@vueuse/core'
 
 const props = defineProps<{
   modelValue: string
@@ -19,9 +20,11 @@ const emit = defineEmits<{
   (e: 'change', value: string): void
 }>()
 
+const isDark = useDark()
+
 const extensions = computed(() => {
   const exts = [basicSetup, json(), EditorView.lineWrapping]
-  if (props.theme === 'dark') {
+  if (props.theme === 'dark' || (props.theme === undefined && isDark.value)) {
     exts.push(oneDark)
   }
   return exts
@@ -34,7 +37,7 @@ const handleChange = (value: string) => {
 </script>
 
 <template>
-  <div class="code-editor-wrapper border border-gray-200 rounded-xl overflow-hidden bg-white">
+  <div class="code-editor-wrapper border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
     <Codemirror
       :model-value="modelValue"
       :placeholder="placeholder"
@@ -64,6 +67,11 @@ const handleChange = (value: string) => {
 .code-editor-wrapper .cm-gutters {
   background-color: #f9fafb;
   border-right: 1px solid #e5e7eb;
+  color: #9ca3af;
+}
+.dark .code-editor-wrapper .cm-gutters {
+  background-color: #1f2937;
+  border-right: 1px solid #374151;
   color: #9ca3af;
 }
 </style>
