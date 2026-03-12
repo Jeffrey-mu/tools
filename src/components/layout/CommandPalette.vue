@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toolsData } from '@/data/tools'
 import { Search, ChevronRight } from 'lucide-vue-next'
@@ -12,6 +12,8 @@ const router = useRouter()
 const isOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
+const activeIndex = ref(0)
+const itemEls = ref<(HTMLButtonElement | null)[]>([])
 
 const allTools = computed(() => {
   return toolsData.flatMap(category =>
@@ -33,8 +35,26 @@ const filteredTools = computed(() => {
   )
 })
 
+watch(filteredTools, (next) => {
+  activeIndex.value = next.length ? 0 : 0
+  itemEls.value = []
+})
+
+const setItemEl = (el: any, index: number) => {
+  itemEls.value[index] = el as HTMLButtonElement | null
+}
+
+const moveActive = (delta: number) => {
+  const count = filteredTools.value.length
+  if (count === 0) return
+  const next = (activeIndex.value + delta + count) % count
+  activeIndex.value = next
+  itemEls.value[next]?.scrollIntoView({ block: 'nearest' })
+}
+
 const open = () => {
   isOpen.value = true
+  activeIndex.value = 0
   setTimeout(() => {
     searchInput.value?.focus()
   }, 100)
@@ -43,6 +63,7 @@ const open = () => {
 const close = () => {
   isOpen.value = false
   searchQuery.value = ''
+  activeIndex.value = 0
 }
 
 const handleSearchSelect = (tool: any) => {
@@ -52,6 +73,30 @@ const handleSearchSelect = (tool: any) => {
     return
   }
   emit('selectCategory', tool.categoryId)
+}
+
+const handleInputKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    moveActive(1)
+    return
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    moveActive(-1)
+    return
+  }
+  if (e.key === 'Enter') {
+    const tool = filteredTools.value[activeIndex.value]
+    if (!tool) return
+    e.preventDefault()
+    handleSearchSelect(tool)
+    return
+  }
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+  }
 }
 
 defineExpose({ open, close })
@@ -72,19 +117,21 @@ defineExpose({ open, close })
     >
       <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" @click="close"></div>
 
-      <div class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+      <div role="dialog" aria-modal="true" class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
         <div class="flex items-center px-4 py-4 border-b border-gray-100 dark:border-gray-700">
           <Search class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-3" />
           <input
             ref="searchInput"
             v-model="searchQuery"
             type="text"
-            placeholder="Search tools..."
+            placeholder="搜索工具…"
             class="flex-1 bg-transparent border-none focus:ring-0 text-lg placeholder-gray-400 text-gray-900 dark:text-gray-100"
+            @keydown="handleInputKeydown"
           >
           <button
             @click="close"
-            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
+            aria-label="关闭搜索"
           >
             <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-400">ESC</kbd>
           </button>
@@ -92,19 +139,22 @@ defineExpose({ open, close })
 
         <div class="flex-1 overflow-y-auto p-2">
           <div v-if="!searchQuery" class="text-center py-12 text-gray-500 dark:text-gray-400">
-            <p class="text-sm">Type to search for tools...</p>
+            <p class="text-sm">输入关键词开始搜索</p>
           </div>
 
           <div v-else-if="filteredTools.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
-            <p class="text-sm">No tools found for "{{ searchQuery }}"</p>
+            <p class="text-sm">没有找到“{{ searchQuery }}”相关工具</p>
           </div>
 
           <div v-else class="space-y-1">
             <button
-              v-for="tool in filteredTools"
+              v-for="(tool, index) in filteredTools"
               :key="tool.name"
               @click="handleSearchSelect(tool)"
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 group transition-colors text-left"
+              :ref="(el) => setItemEl(el, index)"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl group transition-[background-color,transform] duration-150 ease-out text-left active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
+              :class="activeIndex === index ? 'bg-gray-50 dark:bg-gray-700/60' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
+              @pointerenter="activeIndex = index"
             >
               <div class="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
                 <component :is="tool.icon" class="w-5 h-5" />
@@ -123,10 +173,10 @@ defineExpose({ open, close })
         </div>
 
         <div class="bg-gray-50 dark:bg-gray-700/50 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-          <span>{{ filteredTools.length }} results found</span>
+          <span>找到 {{ filteredTools.length }} 个结果</span>
           <div class="flex gap-3">
-            <span class="flex items-center gap-1"><kbd class="font-sans">↑↓</kbd> to navigate</span>
-            <span class="flex items-center gap-1"><kbd class="font-sans">↵</kbd> to select</span>
+            <span class="flex items-center gap-1"><kbd class="font-sans">↑↓</kbd> 选择</span>
+            <span class="flex items-center gap-1"><kbd class="font-sans">↵</kbd> 打开</span>
           </div>
         </div>
       </div>

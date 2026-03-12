@@ -46,7 +46,7 @@ const fileToDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(String(reader.result || ''))
-    reader.onerror = () => reject(new Error('Failed to read file'))
+    reader.onerror = () => reject(new Error('读取文件失败'))
     reader.readAsDataURL(file)
   })
 
@@ -105,29 +105,26 @@ const openSearchFromHeader = () => {
 <template>
   <header class="sticky top-0 z-20 h-20 flex items-center px-4 lg:px-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 transition-all duration-200 shrink-0">
     <button
-      class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl mr-4"
+      class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl mr-4 transition-[background-color,transform] duration-150 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
       @click="emit('toggleSidebar')"
+      aria-label="打开侧边栏"
     >
       <Menu class="w-6 h-6" />
     </button>
 
     <div class="flex-1 flex items-center justify-center">
-      <div
-        class="relative hidden sm:block w-full max-w-md group cursor-pointer"
+      <button
+        type="button"
+        class="hidden sm:flex w-full max-w-md items-center gap-3 px-4 py-2.5 rounded-xl bg-gray-100/50 dark:bg-gray-800/50 text-left border border-transparent hover:border-gray-200/80 dark:hover:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-800 transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
         @click="openSearchFromHeader"
+        aria-label="打开搜索"
       >
-        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 group-focus-within:text-blue-500 transition-colors" />
-        <input
-          type="text"
-          placeholder="Search tools..."
-          class="w-full pl-10 pr-4 py-2.5 bg-gray-100/50 dark:bg-gray-800/50 border-none rounded-xl text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-gray-800 transition-all duration-200 pointer-events-none"
-        >
-        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-          <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-400">
-            <span class="text-xs">⌘</span>K
-          </kbd>
-        </div>
-      </div>
+        <Search class="w-4 h-4 text-gray-400 dark:text-gray-500" />
+        <span class="flex-1 text-sm text-gray-500 dark:text-gray-400">搜索工具…</span>
+        <kbd class="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-1.5 font-mono text-[10px] font-medium text-gray-500 dark:text-gray-400">
+          <span class="text-xs">⌘</span>K
+        </kbd>
+      </button>
     </div>
 
     <div class="flex items-center gap-3 ml-auto">
@@ -135,24 +132,27 @@ const openSearchFromHeader = () => {
         href="https://github.com/Jeffrey-mu/tools"
         target="_blank"
         rel="noopener noreferrer"
-        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100/80 rounded-xl transition-all duration-200 flex items-center justify-center"
+        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100/80 rounded-xl transition-[background-color,transform,color] duration-150 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30 flex items-center justify-center"
+        aria-label="打开 GitHub"
       >
         <Github class="w-5 h-5" />
       </a>
       <button
         @click="props.toggleDark()"
-        class="p-2 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:text-yellow-400 dark:hover:bg-gray-800 rounded-xl transition-all duration-200"
+        class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:text-yellow-300 dark:hover:bg-gray-800 rounded-xl transition-[background-color,transform,color] duration-150 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
+        aria-label="切换主题"
       >
         <Sun v-if="!props.isDark" class="w-5 h-5" />
         <Moon v-else class="w-5 h-5" />
       </button>
-      <div class="h-8 w-px bg-gray-200 mx-1"></div>
+      <div class="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       <div class="relative">
         <button
           ref="profileButtonRef"
-          class="flex items-center gap-2 p-1 pl-2 pr-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full border border-gray-200/50 dark:border-gray-700/60 transition-all duration-200 group"
+          class="flex items-center gap-2 p-1 pl-2 pr-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full border border-gray-200/50 dark:border-gray-700/60 transition-[background-color,transform,border-color] duration-150 ease-out active:scale-[0.99] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30"
           @click="toggleProfile"
+          aria-label="打开个人信息"
         >
           <span class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white max-w-[9rem] truncate">{{ displayName }}</span>
           <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-blue-500/20">
@@ -182,6 +182,7 @@ const openSearchFromHeader = () => {
               <button
                 class="p-1 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 @click="closeProfile"
+                aria-label="关闭个人信息"
               >
                 <X class="w-4 h-4" />
               </button>
@@ -202,9 +203,10 @@ const openSearchFromHeader = () => {
                       <input type="file" accept="image/*" class="hidden" @change="handleAvatarSelect" />
                     </label>
                     <button
-                      class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl transition-colors text-sm font-medium"
+                      class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl transition-[background-color,transform] duration-150 ease-out active:scale-[0.99] text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       @click="removeAvatar"
                       :disabled="!profile.avatarDataUrl"
+                      aria-label="移除头像"
                     >
                       <Trash2 class="w-4 h-4" />
                       移除
