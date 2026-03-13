@@ -113,6 +113,12 @@ const router = createRouter({
           meta: { title: '颜色转换' }
         },
         {
+          path: 'color-viewer',
+          name: 'color-viewer',
+          component: () => import('@/views/tools/image/ColorViewer.vue'),
+          meta: { title: '颜色渲染' }
+        },
+        {
           path: 'image-compress',
           name: 'image-compress',
           component: () => import('@/views/tools/image/ImageCompressor.vue'),

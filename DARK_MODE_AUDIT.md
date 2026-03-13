@@ -8,6 +8,7 @@
 
 ## 图片工具 (Image Tools)
 - [x] `src/views/tools/image/ColorConverter.vue` - Pass
+- [x] `src/views/tools/image/ColorViewer.vue` - Passed (New)
 - [x] `src/views/tools/image/QrCodeGenerator.vue` - Passed (Modified)
 - [x] `src/views/tools/image/ImageCompressor.vue` - Passed (Modified)
 
