@@ -125,6 +125,12 @@ const router = createRouter({
           meta: { title: '图片压缩' }
         },
         {
+          path: 'image-cropper',
+          name: 'image-cropper',
+          component: () => import('@/views/tools/image/ImageCropper.vue'),
+          meta: { title: '图片裁剪' }
+        },
+        {
           path: 'unit',
           name: 'unit-converter',
           component: () => import('@/views/tools/life/UnitConverter.vue'),
