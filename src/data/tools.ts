@@ -15,6 +15,7 @@ import {
   QrCode,
   Palette,
   Minimize,
+  Crop,
   Calculator,
   ListTodo,
   Dices,
@@ -88,7 +89,9 @@ export const toolsData: Category[] = [
     tools: [
       { name: '二维码生成', desc: '文本/链接生成二维码', icon: QrCode, path: '/qrcode', status: '已开发' },
       { name: '颜色转换', desc: 'HEX, RGB, HSL 互转', icon: Palette, path: '/color', status: '已开发' },
+      { name: '颜色渲染', desc: '输入或选择颜色，全屏预览色卡', icon: Palette, path: '/color-viewer', status: '已开发' },
       { name: '图片压缩', desc: '本地图片压缩减小体积', icon: Minimize, path: '/image-compress', status: '已开发' },
+      { name: '图片裁剪', desc: '拖拽上传，自由裁剪，旋转重置并下载', icon: Crop, path: '/image-cropper', status: '已开发' },
     ]
   },
   {

@@ -229,6 +229,12 @@ const router = createRouter({
           }
         },
         {
+          path: 'color-viewer',
+          name: 'color-viewer',
+          component: () => import('@/views/tools/image/ColorViewer.vue'),
+          meta: { title: '颜色渲染' }
+        },
+        {
           path: 'image-compress',
           name: 'image-compress',
           component: () => import('@/views/tools/image/ImageCompressor.vue'),
@@ -239,6 +245,12 @@ const router = createRouter({
               '本地处理'
             ])
           }
+        },
+        {
+          path: 'image-cropper',
+          name: 'image-cropper',
+          component: () => import('@/views/tools/image/ImageCropper.vue'),
+          meta: { title: '图片裁剪' }
         },
         {
           path: 'unit',
