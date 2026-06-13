@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { Palette, Copy, RefreshCw, Check } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
 import { colord, extend } from 'colord'
 import namesPlugin from 'colord/plugins/names'
 import cmykPlugin from 'colord/plugins/cmyk'
 import hwbPlugin from 'colord/plugins/hwb'
 import a11yPlugin from 'colord/plugins/a11y'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 extend([namesPlugin, cmykPlugin, hwbPlugin, a11yPlugin])
 
 const color = ref('#3b82f6') // Default Blue-500
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 // Inputs
 const inputHex = ref(color.value)
@@ -85,7 +85,7 @@ const palette = computed(() => {
 })
 
 const copyColor = (text: string) => {
-  copy(text)
+  copyWithFeedback(text, text)
 }
 </script>
 
@@ -119,9 +119,9 @@ const copyColor = (text: string) => {
         class="absolute inset-0 z-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10 backdrop-blur-[2px] cursor-pointer"
       >
         <div class="bg-white/20 backdrop-blur-md px-6 py-3 rounded-full text-white font-medium flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-          <Check v-if="copied && inputHex === color" class="w-5 h-5" />
+          <Check v-if="isCopied(color)" class="w-5 h-5" />
           <Copy v-else class="w-5 h-5" />
-          <span>{{ copied && inputHex === color ? '已复制' : '复制 HEX' }}</span>
+          <span>{{ isCopied(color) ? '已复制' : isCopyError(color) ? '复制失败' : '复制 HEX' }}</span>
         </div>
       </button>
     </div>
@@ -148,8 +148,16 @@ const copyColor = (text: string) => {
                 type="text" 
                 class="w-full pl-4 pr-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-mono text-gray-800 dark:text-gray-100 transition-all"
               >
-              <button @click="copyColor(inputHex)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors">
-                <Copy class="w-4 h-4" />
+              <button
+                @click="copyColor(inputHex)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                :class="isCopied(inputHex)
+                  ? 'text-green-600 dark:text-green-400'
+                  : isCopyError(inputHex)
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-400 hover:text-purple-500'"
+              >
+                <component :is="isCopied(inputHex) ? Check : Copy" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -163,8 +171,16 @@ const copyColor = (text: string) => {
                 type="text" 
                 class="w-full pl-4 pr-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-mono text-gray-800 dark:text-gray-100 transition-all"
               >
-              <button @click="copyColor(inputRgb)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors">
-                <Copy class="w-4 h-4" />
+              <button
+                @click="copyColor(inputRgb)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                :class="isCopied(inputRgb)
+                  ? 'text-green-600 dark:text-green-400'
+                  : isCopyError(inputRgb)
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-400 hover:text-purple-500'"
+              >
+                <component :is="isCopied(inputRgb) ? Check : Copy" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -178,8 +194,16 @@ const copyColor = (text: string) => {
                 type="text" 
                 class="w-full pl-4 pr-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-mono text-gray-800 dark:text-gray-100 transition-all"
               >
-              <button @click="copyColor(inputHsl)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors">
-                <Copy class="w-4 h-4" />
+              <button
+                @click="copyColor(inputHsl)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                :class="isCopied(inputHsl)
+                  ? 'text-green-600 dark:text-green-400'
+                  : isCopyError(inputHsl)
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-400 hover:text-purple-500'"
+              >
+                <component :is="isCopied(inputHsl) ? Check : Copy" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -193,8 +217,16 @@ const copyColor = (text: string) => {
                 type="text" 
                 class="w-full pl-4 pr-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-mono text-gray-800 dark:text-gray-100 transition-all"
               >
-              <button @click="copyColor(inputCmyk)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors">
-                <Copy class="w-4 h-4" />
+              <button
+                @click="copyColor(inputCmyk)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                :class="isCopied(inputCmyk)
+                  ? 'text-green-600 dark:text-green-400'
+                  : isCopyError(inputCmyk)
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-400 hover:text-purple-500'"
+              >
+                <component :is="isCopied(inputCmyk) ? Check : Copy" class="w-4 h-4" />
               </button>
             </div>
           </div>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Link, Copy, Check, RotateCcw, Plus, Trash2 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const inputUrl = ref('')
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 interface QueryParam {
   key: string
@@ -131,7 +131,7 @@ const clearAll = () => {
 }
 
 const copyResult = () => {
-  copy(reconstructedUrl.value)
+  copyWithFeedback(reconstructedUrl.value, 'result')
 }
 
 const reset = () => {
@@ -270,13 +270,17 @@ const reset = () => {
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-bold text-gray-900 dark:text-white">重组 URL</h3>
-        <button 
+        <button
           @click="copyResult"
           class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
-          :class="copied ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'"
+          :class="isCopied('result')
+            ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+            : isCopyError('result')
+              ? 'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'"
         >
-          <component :is="copied ? Check : Copy" class="w-4 h-4" />
-          {{ copied ? '已复制' : '复制' }}
+          <component :is="isCopied('result') ? Check : Copy" class="w-4 h-4" />
+          {{ isCopied('result') ? '已复制' : isCopyError('result') ? '复制失败' : '复制' }}
         </button>
       </div>
       

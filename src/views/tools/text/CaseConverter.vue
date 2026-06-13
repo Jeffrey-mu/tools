@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CaseUpper, Copy, Trash2 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { CaseUpper, Copy, Trash2, Check } from 'lucide-vue-next'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const input = ref('')
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const toCamelCase = (str: string) => {
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
@@ -55,7 +55,7 @@ const conversions = computed(() => {
 })
 
 const copyResult = (text: string) => {
-  copy(text)
+  copyWithFeedback(text, text)
 }
 
 const clear = () => {
@@ -111,12 +111,17 @@ const clear = () => {
           >
             <div class="flex justify-between items-start mb-1">
               <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ item.name }}</span>
-              <button 
+              <button
                 @click="copyResult(item.value)"
-                class="opacity-0 group-hover:opacity-100 p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
-                title="复制"
+                class="p-1 transition-all"
+                :class="isCopied(item.value) || isCopyError(item.value)
+                  ? (isCopied(item.value)
+                    ? 'opacity-100 text-green-600 dark:text-green-400'
+                    : 'opacity-100 text-red-600 dark:text-red-400')
+                  : 'opacity-0 group-hover:opacity-100 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400'"
+                :title="isCopied(item.value) ? '已复制' : isCopyError(item.value) ? '复制失败' : '复制'"
               >
-                <Copy class="w-4 h-4" />
+                <component :is="isCopied(item.value) ? Check : Copy" class="w-4 h-4" />
               </button>
             </div>
             <div class="font-mono text-gray-800 dark:text-gray-100 break-all">{{ item.value }}</div>

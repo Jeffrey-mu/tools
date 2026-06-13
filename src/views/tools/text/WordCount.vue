@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { AlignLeft, Copy, Trash2 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const text = ref('')
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const stats = computed(() => {
   const t = text.value
@@ -53,13 +53,18 @@ const clear = () => {
       </div>
       
       <div class="flex items-center gap-2">
-        <button 
+        <button
           v-if="text"
-          @click="copy(text)"
-          class="px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
+          @click="copyWithFeedback(text, 'text')"
+          class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+          :class="isCopied('text')
+            ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20'
+            : isCopyError('text')
+              ? 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20'
+              : 'text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'"
         >
           <Copy class="w-4 h-4" />
-          {{ copied ? '已复制' : '复制文本' }}
+          {{ isCopied('text') ? '已复制' : isCopyError('text') ? '复制失败' : '复制文本' }}
         </button>
         <button 
           @click="clear"

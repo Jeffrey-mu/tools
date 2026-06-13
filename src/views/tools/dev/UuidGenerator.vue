@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { v1 as uuidv1, v4 as uuidv4 } from 'uuid'
-import { Copy, RefreshCw, Fingerprint, Trash2 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { Copy, RefreshCw, Fingerprint, Trash2, Check } from 'lucide-vue-next'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const count = ref(5)
 const version = ref<'v1' | 'v4'>('v4')
@@ -10,7 +10,7 @@ const hyphens = ref(true)
 const uppercase = ref(false)
 const generatedUuids = ref<string[]>([])
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const generate = () => {
   const newUuids: string[] = []
@@ -36,7 +36,7 @@ const clear = () => {
 
 const copyAll = () => {
   if (generatedUuids.value.length === 0) return
-  copy(generatedUuids.value.join('\n'))
+  copyWithFeedback(generatedUuids.value.join('\n'), 'all')
 }
 
 // Initial generation
@@ -122,13 +122,17 @@ generate()
         <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-2">
           生成的 UUID ({{ generatedUuids.length }})
         </span>
-        <button 
+        <button
           @click="copyAll"
           class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium"
-          :class="copied ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-700'"
+          :class="isCopied('all')
+            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+            : isCopyError('all')
+              ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+              : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-700'"
         >
-          <Copy class="w-3.5 h-3.5" />
-          {{ copied ? '已复制全部' : '复制全部' }}
+          <component :is="isCopied('all') ? Check : Copy" class="w-3.5 h-3.5" />
+          {{ isCopied('all') ? '已复制全部' : isCopyError('all') ? '复制失败' : '复制全部' }}
         </button>
       </div>
       
@@ -139,12 +143,17 @@ generate()
           class="group flex items-center justify-between p-3 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
         >
           <code class="font-mono text-gray-700 dark:text-gray-200 text-sm sm:text-base select-all">{{ uuid }}</code>
-          <button 
-            @click="copy(uuid)"
-            class="p-1.5 text-gray-300 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-            title="复制"
+          <button
+            @click="copyWithFeedback(uuid, uuid)"
+            class="p-1.5 rounded-lg transition-all"
+            :class="isCopied(uuid) || isCopyError(uuid)
+              ? (isCopied(uuid)
+                ? 'opacity-100 text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30'
+                : 'opacity-100 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30')
+              : 'text-gray-300 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 opacity-0 group-hover:opacity-100'"
+            :title="isCopied(uuid) ? '已复制' : isCopyError(uuid) ? '复制失败' : '复制'"
           >
-            <Copy class="w-4 h-4" />
+            <component :is="isCopied(uuid) ? Check : Copy" class="w-4 h-4" />
           </button>
         </div>
       </div>

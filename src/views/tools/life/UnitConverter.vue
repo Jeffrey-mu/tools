@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import convert from 'convert-units'
 import { ArrowRightLeft, Copy, Check } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 // Measures to support
 const SUPPORTED_MEASURES = [
@@ -124,11 +124,11 @@ const swapUnits = () => {
 // Watchers for immediate updates
 watch([fromUnit, toUnit], () => calculate('from'))
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const copyResult = () => {
   if (toValue.value) {
-    copy(toValue.value.toString())
+    copyWithFeedback(toValue.value.toString(), 'result')
   }
 }
 </script>
@@ -236,14 +236,19 @@ const copyResult = () => {
                 </div>
                 
                 <!-- Copy Button -->
-                <button 
+                <button
                   v-if="toValue"
                   @click="copyResult"
-                  class="absolute right-4 bottom-[-2.5rem] flex items-center gap-1 text-sm font-medium text-indigo-500 hover:text-indigo-700 transition-colors"
+                  class="absolute right-4 bottom-[-2.5rem] flex items-center gap-1 text-sm font-medium transition-colors"
+                  :class="isCopied('result')
+                    ? 'text-green-600 dark:text-green-400'
+                    : isCopyError('result')
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-indigo-500 hover:text-indigo-700'"
                 >
-                  <Check v-if="copied" class="w-4 h-4" />
+                  <Check v-if="isCopied('result')" class="w-4 h-4" />
                   <Copy v-else class="w-4 h-4" />
-                  {{ copied ? '已复制' : '复制结果' }}
+                  {{ isCopied('result') ? '已复制' : isCopyError('result') ? '复制失败' : '复制结果' }}
                 </button>
               </div>
             </div>

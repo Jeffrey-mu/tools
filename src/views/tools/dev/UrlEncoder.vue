@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Link, ArrowRightLeft, Copy, Trash2 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
 import CodeEditor from '@/components/common/CodeEditor.vue'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const input = ref('')
 const output = ref('')
 const error = ref('')
 const mode = ref<'component' | 'uri'>('component')
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const encode = () => {
   if (!input.value) return
@@ -130,14 +130,18 @@ const clear = () => {
       <div class="flex flex-col gap-2 h-full min-h-0">
         <div class="flex items-center justify-between px-1">
           <label class="text-sm font-medium text-gray-500 dark:text-gray-400">结果</label>
-          <button 
+          <button
             v-if="output"
-            @click="copy(output)"
+            @click="copyWithFeedback(output, 'output')"
             class="text-xs flex items-center gap-1 transition-colors"
-            :class="copied ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
+            :class="isCopied('output')
+              ? 'text-green-600 dark:text-green-400'
+              : isCopyError('output')
+                ? 'text-red-600 dark:text-red-400'
+                : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
           >
             <Copy class="w-3 h-3" />
-            {{ copied ? '已复制' : '复制结果' }}
+            {{ isCopied('output') ? '已复制' : isCopyError('output') ? '复制失败' : '复制结果' }}
           </button>
         </div>
         <div class="relative flex-1 min-h-0">

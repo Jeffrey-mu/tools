@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Copy, ArrowRightLeft, Trash2, Binary } from 'lucide-vue-next'
-import { useClipboard, useBase64 } from '@vueuse/core'
+import { useBase64 } from '@vueuse/core'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const input = ref('')
 const output = ref('')
 const mode = ref<'encode' | 'decode'>('encode')
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const process = () => {
   if (!input.value) {
@@ -109,14 +110,18 @@ watch([input, mode], () => {
           <label class="text-sm font-medium text-gray-500 dark:text-gray-400">
             {{ mode === 'encode' ? 'Base64 结果' : '明文结果' }}
           </label>
-          <button 
+          <button
             v-if="output"
-            @click="copy(output)"
+            @click="copyWithFeedback(output, 'output')"
             class="text-xs flex items-center gap-1 transition-colors"
-            :class="copied ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
+            :class="isCopied('output')
+              ? 'text-green-600 dark:text-green-400'
+              : isCopyError('output')
+                ? 'text-red-600 dark:text-red-400'
+                : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'"
           >
             <Copy class="w-3 h-3" />
-            {{ copied ? '已复制' : '复制结果' }}
+            {{ isCopied('output') ? '已复制' : isCopyError('output') ? '复制失败' : '复制结果' }}
           </button>
         </div>
         <div class="relative flex-1">

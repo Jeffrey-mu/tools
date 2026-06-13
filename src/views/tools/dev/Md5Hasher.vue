@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { FileLock2, Copy, Check, RotateCcw } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
 import CryptoJS from 'crypto-js'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const inputText = ref('')
 const isUpperCase = ref(false)
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const md5Result = computed(() => {
   if (!inputText.value) return ''
@@ -20,8 +20,8 @@ const md5Result16 = computed(() => {
   return md5Result.value.substring(8, 24)
 })
 
-const copyResult = (text: string) => {
-  copy(text)
+const copyResult = (text: string, key: string) => {
+  copyWithFeedback(text, key)
 }
 
 const reset = () => {
@@ -78,13 +78,18 @@ const reset = () => {
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-bold text-gray-900 dark:text-white">32位 MD5</h3>
-          <button 
+          <button
             v-if="md5Result"
-            @click="copyResult(md5Result)"
-            class="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
-            title="复制"
+            @click="copyResult(md5Result, 'md5-32')"
+            class="p-1.5 rounded-lg transition-colors"
+            :class="isCopied('md5-32')
+              ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20'
+              : isCopyError('md5-32')
+                ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
+                : 'text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'"
+            :title="isCopied('md5-32') ? '已复制' : isCopyError('md5-32') ? '复制失败' : '复制'"
           >
-            <component :is="copied && md5Result ? Check : Copy" class="w-4 h-4" />
+            <component :is="isCopied('md5-32') ? Check : Copy" class="w-4 h-4" />
           </button>
         </div>
         <div class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl break-all font-mono text-sm text-gray-600 dark:text-gray-300 min-h-[54px] flex items-center">
@@ -96,13 +101,18 @@ const reset = () => {
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-bold text-gray-900 dark:text-white">16位 MD5</h3>
-          <button 
+          <button
             v-if="md5Result16"
-            @click="copyResult(md5Result16)"
-            class="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
-            title="复制"
+            @click="copyResult(md5Result16, 'md5-16')"
+            class="p-1.5 rounded-lg transition-colors"
+            :class="isCopied('md5-16')
+              ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20'
+              : isCopyError('md5-16')
+                ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
+                : 'text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30'"
+            :title="isCopied('md5-16') ? '已复制' : isCopyError('md5-16') ? '复制失败' : '复制'"
           >
-            <component :is="copied && md5Result16 ? Check : Copy" class="w-4 h-4" />
+            <component :is="isCopied('md5-16') ? Check : Copy" class="w-4 h-4" />
           </button>
         </div>
         <div class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl break-all font-mono text-sm text-gray-600 dark:text-gray-300 min-h-[54px] flex items-center">

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Clock, Copy, Play, Pause, RefreshCw } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { Clock, Copy, Play, Pause, RefreshCw, Check } from 'lucide-vue-next'
 import dayjs from 'dayjs'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 // Current Time
 const now = ref(dayjs())
@@ -67,8 +67,17 @@ const setNow = () => {
           <div class="flex items-center gap-2">
             <span>Unix:</span>
             <span class="text-blue-600 dark:text-blue-400 font-bold">{{ now.unix() }}</span>
-            <button @click="copy(String(now.unix()))" class="hover:text-blue-600 dark:hover:text-blue-400">
-              <Copy class="w-4 h-4" />
+            <button
+              @click="copyWithFeedback(String(now.unix()), 'now-unix')"
+              class="transition-colors"
+              :class="isCopied('now-unix')
+                ? 'text-green-600 dark:text-green-400'
+                : isCopyError('now-unix')
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'hover:text-blue-600 dark:hover:text-blue-400'"
+              :title="isCopied('now-unix') ? '已复制' : isCopyError('now-unix') ? '复制失败' : '复制 Unix 时间戳'"
+            >
+              <component :is="isCopied('now-unix') ? Check : Copy" class="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -137,12 +146,17 @@ const setNow = () => {
                 >
                   <RefreshCw class="w-4 h-4" />
                 </button>
-                <button 
-                  @click="copy(inputDate)"
-                  class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                  title="复制"
+                <button
+                  @click="copyWithFeedback(inputDate, 'input-date')"
+                  class="p-1.5 rounded-lg transition-colors"
+                  :class="isCopied('input-date')
+                    ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20'
+                    : isCopyError('input-date')
+                      ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20'
+                      : 'text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'"
+                  :title="isCopied('input-date') ? '已复制' : isCopyError('input-date') ? '复制失败' : '复制'"
                 >
-                  <Copy class="w-4 h-4" />
+                  <component :is="isCopied('input-date') ? Check : Copy" class="w-4 h-4" />
                 </button>
               </div>
             </div>

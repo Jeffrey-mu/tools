@@ -12,7 +12,7 @@ import {
   Copy,
   Check
 } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 type RecorderStatus = 'idle' | 'recording' | 'paused' | 'stopped'
 
@@ -40,7 +40,7 @@ const startedAt = ref<number | null>(null)
 const elapsedMs = ref(0)
 const timerId = ref<number | null>(null)
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const secureContext = computed(() => typeof window !== 'undefined' && window.isSecureContext === true)
 const hasMediaDevices = computed(() => typeof navigator !== 'undefined' && !!navigator.mediaDevices)
@@ -368,7 +368,7 @@ const clearRecording = async () => {
 
 const copyUrl = async () => {
   if (!recordedUrl.value) return
-  await copy(recordedUrl.value)
+  await copyWithFeedback(recordedUrl.value, 'recording-url')
 }
 
 onBeforeUnmount(async () => {
@@ -552,13 +552,15 @@ onBeforeUnmount(async () => {
               v-if="hasRecording"
               @click="copyUrl"
               class="px-3 py-2 text-sm font-medium rounded-lg transition-colors border"
-              :class="copied
+              :class="isCopied('recording-url')
                 ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800/40'
+                : isCopyError('recording-url')
+                  ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800/40'
                 : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-gray-900/20 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-900/30'"
             >
               <span class="inline-flex items-center gap-2">
-                <component :is="copied ? Check : Copy" class="w-4 h-4" />
-                {{ copied ? '已复制' : '复制链接' }}
+                <component :is="isCopied('recording-url') ? Check : Copy" class="w-4 h-4" />
+                {{ isCopied('recording-url') ? '已复制' : isCopyError('recording-url') ? '复制失败' : '复制链接' }}
               </span>
             </button>
           </div>

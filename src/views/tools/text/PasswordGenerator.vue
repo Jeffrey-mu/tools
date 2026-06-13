@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { KeyRound, RefreshCw, Copy } from 'lucide-vue-next'
-import { useClipboard } from '@vueuse/core'
+import { KeyRound, RefreshCw, Copy, Check } from 'lucide-vue-next'
+import { useCopyFeedback } from '@/composables/useCopyFeedback'
 
 const length = ref(16)
 const includeUppercase = ref(true)
@@ -10,7 +10,7 @@ const includeNumbers = ref(true)
 const includeSymbols = ref(true)
 const password = ref('')
 
-const { copy, copied } = useClipboard()
+const { copyWithFeedback, isCopied, isCopyError } = useCopyFeedback()
 
 const generate = () => {
   const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -137,18 +137,26 @@ const strengthText = computed(() => {
             <div class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Generated Password</div>
             <div 
               class="relative group bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-500/50 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all duration-300"
-              :class="{ 'ring-4 ring-blue-50 dark:ring-blue-900/30 border-blue-300 dark:border-blue-600': copied }"
+              :class="{
+                'ring-4 ring-blue-50 dark:ring-blue-900/30 border-blue-300 dark:border-blue-600': isCopied('password'),
+                'ring-4 ring-red-50 dark:ring-red-900/20 border-red-300 dark:border-red-600': isCopyError('password')
+              }"
             >
               <div class="font-mono text-3xl md:text-4xl text-gray-800 dark:text-gray-100 break-all leading-tight">
                 {{ password || '...' }}
               </div>
               
-              <button 
-                @click="copy(password)"
-                class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-gray-900 rounded-lg shadow-sm dark:shadow-none border border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-all"
-                title="复制密码"
+              <button
+                @click="copyWithFeedback(password, 'password')"
+                class="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white dark:bg-gray-900 rounded-lg shadow-sm dark:shadow-none border border-gray-100 dark:border-gray-700 transition-all"
+                :class="isCopied('password') || isCopyError('password')
+                  ? (isCopied('password')
+                    ? 'opacity-100 text-green-600 dark:text-green-400'
+                    : 'opacity-100 text-red-600 dark:text-red-400')
+                  : 'opacity-0 group-hover:opacity-100 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400'"
+                :title="isCopied('password') ? '已复制密码' : isCopyError('password') ? '复制失败' : '复制密码'"
               >
-                <Copy class="w-5 h-5" />
+                <component :is="isCopied('password') ? Check : Copy" class="w-5 h-5" />
               </button>
             </div>
             
