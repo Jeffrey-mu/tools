@@ -5,17 +5,186 @@ import * as Diff from 'diff'
 
 const oldText = ref('')
 const newText = ref('')
-const mode = ref<'lines' | 'chars'>('lines')
+const mode = ref<'lines' | 'words' | 'chars'>('lines')
 const viewType = ref<'unified' | 'split'>('unified')
+const inlineHighlight = ref(true)
+const inlineGranularity = ref<'chars' | 'words'>('chars')
+const maxInlineTotalLength = 50000
+
+type InlinePart = { value: string; type: 'normal' | 'added' | 'removed' }
+type UnifiedRow = {
+  kind: 'normal' | 'added' | 'removed'
+  oldLine: number | null
+  newLine: number | null
+  parts: InlinePart[]
+}
+
+type SplitRow = {
+  type: 'normal' | 'added' | 'removed' | 'modified' | 'empty'
+  lineNum: number | null
+  value: string
+  parts?: InlinePart[]
+}
+
+const canInline = computed(() => {
+  if (mode.value !== 'lines') return false
+  if (!inlineHighlight.value) return false
+  return oldText.value.length + newText.value.length <= maxInlineTotalLength
+})
+
+const splitPartLines = (value: string) => {
+  const lines = value.split(/\r\n|\r|\n/)
+  if (lines.length && lines[lines.length - 1] === '') lines.pop()
+  return lines
+}
+
+const computeInlineParts = (leftText: string, rightText: string) => {
+  const base = inlineGranularity.value === 'words'
+    ? Diff.diffWordsWithSpace(leftText, rightText)
+    : Diff.diffChars(leftText, rightText)
+
+  const left: InlinePart[] = []
+  const right: InlinePart[] = []
+
+  base.forEach((p) => {
+    if (p.added) {
+      right.push({ value: p.value, type: 'added' })
+      return
+    }
+
+    if (p.removed) {
+      left.push({ value: p.value, type: 'removed' })
+      return
+    }
+
+    left.push({ value: p.value, type: 'normal' })
+    right.push({ value: p.value, type: 'normal' })
+  })
+
+  return { left, right }
+}
+
+const unifiedRows = computed<UnifiedRow[]>(() => {
+  if (mode.value !== 'lines') return []
+  if (!oldText.value && !newText.value) return []
+
+  const changes = Diff.diffLines(oldText.value, newText.value)
+  const rows: UnifiedRow[] = []
+
+  let oldLine = 1
+  let newLine = 1
+
+  for (let i = 0; i < changes.length; i += 1) {
+    const part = changes[i]
+    const next = changes[i + 1]
+
+    if (part.removed && next?.added) {
+      const leftLines = splitPartLines(part.value)
+      const rightLines = splitPartLines(next.value)
+      const max = Math.max(leftLines.length, rightLines.length)
+
+      for (let j = 0; j < max; j += 1) {
+        const l = leftLines[j]
+        const r = rightLines[j]
+
+        if (l !== undefined && r !== undefined) {
+          const inline = canInline.value ? computeInlineParts(l, r) : null
+          rows.push({
+            kind: 'removed',
+            oldLine,
+            newLine: null,
+            parts: inline ? inline.left : [{ value: l, type: 'removed' }]
+          })
+          rows.push({
+            kind: 'added',
+            oldLine: null,
+            newLine,
+            parts: inline ? inline.right : [{ value: r, type: 'added' }]
+          })
+          oldLine += 1
+          newLine += 1
+          continue
+        }
+
+        if (l !== undefined) {
+          rows.push({
+            kind: 'removed',
+            oldLine,
+            newLine: null,
+            parts: [{ value: l, type: 'removed' }]
+          })
+          oldLine += 1
+          continue
+        }
+
+        if (r !== undefined) {
+          rows.push({
+            kind: 'added',
+            oldLine: null,
+            newLine,
+            parts: [{ value: r, type: 'added' }]
+          })
+          newLine += 1
+        }
+      }
+
+      i += 1
+      continue
+    }
+
+    if (part.added) {
+      splitPartLines(part.value).forEach((line) => {
+        rows.push({
+          kind: 'added',
+          oldLine: null,
+          newLine,
+          parts: [{ value: line, type: 'added' }]
+        })
+        newLine += 1
+      })
+      continue
+    }
+
+    if (part.removed) {
+      splitPartLines(part.value).forEach((line) => {
+        rows.push({
+          kind: 'removed',
+          oldLine,
+          newLine: null,
+          parts: [{ value: line, type: 'removed' }]
+        })
+        oldLine += 1
+      })
+      continue
+    }
+
+    splitPartLines(part.value).forEach((line) => {
+      rows.push({
+        kind: 'normal',
+        oldLine,
+        newLine,
+        parts: [{ value: line, type: 'normal' }]
+      })
+      oldLine += 1
+      newLine += 1
+    })
+  }
+
+  return rows
+})
 
 const diffResult = computed(() => {
   if (!oldText.value && !newText.value) return []
-  
-  if (mode.value === 'lines') {
-    return Diff.diffLines(oldText.value, newText.value)
-  } else {
+
+  if (mode.value === 'words') {
+    return Diff.diffWordsWithSpace(oldText.value, newText.value)
+  }
+
+  if (mode.value === 'chars') {
     return Diff.diffChars(oldText.value, newText.value)
   }
+
+  return Diff.diffLines(oldText.value, newText.value)
 })
 
 // For split view, we need to process the diff result to align lines
@@ -30,36 +199,75 @@ const splitDiff = computed(() => {
   let leftLineNum = 1
   let rightLineNum = 1
   
-  changes.forEach(part => {
-    if (part.added) {
-      // Added lines appear on the right, empty on the left
-      const lines = part.value.split(/\r\n|\r|\n/)
-      if (lines[lines.length - 1] === '') lines.pop() // Remove trailing empty string from split
-      
-      lines.forEach(line => {
-        leftRows.push({ type: 'empty', lineNum: null, value: '' })
-        rightRows.push({ type: 'added', lineNum: rightLineNum++, value: line })
-      })
-    } else if (part.removed) {
-      // Removed lines appear on the left, empty on the right
-      const lines = part.value.split(/\r\n|\r|\n/)
-      if (lines[lines.length - 1] === '') lines.pop()
-      
-      lines.forEach(line => {
-        leftRows.push({ type: 'removed', lineNum: leftLineNum++, value: line })
-        rightRows.push({ type: 'empty', lineNum: null, value: '' })
-      })
-    } else {
-      // Unchanged lines appear on both sides
-      const lines = part.value.split(/\r\n|\r|\n/)
-      if (lines[lines.length - 1] === '') lines.pop()
-      
-      lines.forEach(line => {
-        leftRows.push({ type: 'normal', lineNum: leftLineNum++, value: line })
-        rightRows.push({ type: 'normal', lineNum: rightLineNum++, value: line })
-      })
+  for (let i = 0; i < changes.length; i += 1) {
+    const part = changes[i]
+    const next = changes[i + 1]
+
+    if (part.removed && next?.added) {
+      const leftLines = splitPartLines(part.value)
+      const rightLines = splitPartLines(next.value)
+      const max = Math.max(leftLines.length, rightLines.length)
+
+      for (let j = 0; j < max; j += 1) {
+        const l = leftLines[j]
+        const r = rightLines[j]
+
+        if (l !== undefined && r !== undefined) {
+          const inline = canInline.value ? computeInlineParts(l, r) : null
+          const leftRow: SplitRow = {
+            type: 'modified',
+            lineNum: leftLineNum++,
+            value: l,
+            parts: inline ? inline.left : undefined
+          }
+          const rightRow: SplitRow = {
+            type: 'modified',
+            lineNum: rightLineNum++,
+            value: r,
+            parts: inline ? inline.right : undefined
+          }
+          leftRows.push(leftRow)
+          rightRows.push(rightRow)
+          continue
+        }
+
+        if (l !== undefined) {
+          leftRows.push({ type: 'removed', lineNum: leftLineNum++, value: l } satisfies SplitRow)
+          rightRows.push({ type: 'empty', lineNum: null, value: '' } satisfies SplitRow)
+          continue
+        }
+
+        if (r !== undefined) {
+          leftRows.push({ type: 'empty', lineNum: null, value: '' } satisfies SplitRow)
+          rightRows.push({ type: 'added', lineNum: rightLineNum++, value: r } satisfies SplitRow)
+        }
+      }
+
+      i += 1
+      continue
     }
-  })
+
+    if (part.added) {
+      splitPartLines(part.value).forEach((line) => {
+        leftRows.push({ type: 'empty', lineNum: null, value: '' } satisfies SplitRow)
+        rightRows.push({ type: 'added', lineNum: rightLineNum++, value: line } satisfies SplitRow)
+      })
+      continue
+    }
+
+    if (part.removed) {
+      splitPartLines(part.value).forEach((line) => {
+        leftRows.push({ type: 'removed', lineNum: leftLineNum++, value: line } satisfies SplitRow)
+        rightRows.push({ type: 'empty', lineNum: null, value: '' } satisfies SplitRow)
+      })
+      continue
+    }
+
+    splitPartLines(part.value).forEach((line) => {
+      leftRows.push({ type: 'normal', lineNum: leftLineNum++, value: line } satisfies SplitRow)
+      rightRows.push({ type: 'normal', lineNum: rightLineNum++, value: line } satisfies SplitRow)
+    })
+  }
   
   return { left: leftRows, right: rightRows }
 })
@@ -90,6 +298,13 @@ const clear = () => {
             按行
           </button>
           <button 
+            @click="mode = 'words'; viewType = 'unified'"
+            class="px-3 py-1 text-sm font-medium rounded-md transition-all"
+            :class="mode === 'words' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
+          >
+            按词
+          </button>
+          <button 
             @click="mode = 'chars'"
             class="px-3 py-1 text-sm font-medium rounded-md transition-all"
             :class="mode === 'chars' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
@@ -116,6 +331,24 @@ const clear = () => {
           >
             <Split class="w-4 h-4" />
           </button>
+        </div>
+
+        <div v-if="mode === 'lines'" class="flex items-center gap-3">
+          <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 select-none">
+            <input v-model="inlineHighlight" type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500">
+            行内高亮
+          </label>
+          <select
+            v-model="inlineGranularity"
+            :disabled="!inlineHighlight"
+            class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 px-2 py-1 disabled:opacity-60"
+          >
+            <option value="chars">行内：字符</option>
+            <option value="words">行内：按词</option>
+          </select>
+          <span v-if="inlineHighlight && !canInline" class="text-xs text-gray-400 dark:text-gray-500">
+            文本较大，已自动关闭行内高亮
+          </span>
         </div>
 
         <button 
@@ -159,19 +392,39 @@ const clear = () => {
       </div>
       
       <div class="flex-1 overflow-auto p-4 font-mono text-sm text-gray-800 dark:text-gray-100">
-        <!-- Unified View -->
-        <pre v-if="viewType === 'unified' || mode === 'chars'" class="whitespace-pre-wrap break-all"><span 
-            v-for="(part, index) in diffResult" 
-            :key="index"
-            :class="{
-              'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200': part.added,
-              'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 decoration-red-500': part.removed,
-              'line-through opacity-70': part.removed && mode === 'chars'
-            }"
-          >{{ part.value }}</span></pre>
+        <div v-if="mode === 'lines'">
+          <!-- Unified View -->
+          <div v-if="viewType === 'unified'" class="min-w-full">
+            <div
+              v-for="(row, index) in unifiedRows"
+              :key="index"
+              class="flex"
+              :class="{
+                'bg-green-50 dark:bg-green-900/20': row.kind === 'added',
+                'bg-red-50 dark:bg-red-900/20': row.kind === 'removed'
+              }"
+            >
+              <div class="w-16 shrink-0 flex items-center justify-end gap-1 pr-2 text-xs text-gray-400 dark:text-gray-500 select-none bg-gray-50 dark:bg-gray-900 border-r border-gray-100 dark:border-gray-700 py-0.5">
+                <span class="w-4 text-center">{{ row.kind === 'added' ? '+' : row.kind === 'removed' ? '-' : '' }}</span>
+                <span class="w-5 text-right">{{ row.oldLine ?? '' }}</span>
+                <span class="w-1 text-center">·</span>
+                <span class="w-5 text-left">{{ row.newLine ?? '' }}</span>
+              </div>
+              <div class="flex-1 px-2 whitespace-pre-wrap break-all py-0.5">
+                <span
+                  v-for="(p, pIdx) in row.parts"
+                  :key="pIdx"
+                  :class="{
+                    'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200': p.type === 'added',
+                    'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200': p.type === 'removed'
+                  }"
+                >{{ p.value }}</span>
+              </div>
+            </div>
+          </div>
 
-        <!-- Split View (Only for Lines) -->
-        <div v-else-if="viewType === 'split' && splitDiff" class="flex min-w-full">
+          <!-- Split View -->
+          <div v-else-if="viewType === 'split' && splitDiff" class="flex min-w-full">
           <!-- Left (Old) -->
           <div class="w-1/2 border-r border-gray-200 dark:border-gray-700 select-text">
             <div 
@@ -180,6 +433,7 @@ const clear = () => {
               class="flex"
               :class="{
                 'bg-red-50 dark:bg-red-900/20': row.type === 'removed',
+                'bg-yellow-50 dark:bg-yellow-900/20': row.type === 'modified',
                 'bg-gray-50/50 dark:bg-gray-900/30': row.type === 'empty'
               }"
             >
@@ -187,7 +441,16 @@ const clear = () => {
                 {{ row.lineNum }}
               </div>
               <div class="flex-1 px-2 whitespace-pre-wrap break-all py-0.5">
-                <span :class="{'text-red-700 dark:text-red-300': row.type === 'removed'}">{{ row.value }}</span>
+                <template v-if="row.parts">
+                  <span
+                    v-for="(p, pIdx) in row.parts"
+                    :key="pIdx"
+                    :class="{
+                      'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200': p.type === 'removed'
+                    }"
+                  >{{ p.value }}</span>
+                </template>
+                <span v-else :class="{'text-red-700 dark:text-red-300': row.type === 'removed'}">{{ row.value }}</span>
               </div>
             </div>
           </div>
@@ -200,6 +463,7 @@ const clear = () => {
               class="flex"
               :class="{
                 'bg-green-50 dark:bg-green-900/20': row.type === 'added',
+                'bg-yellow-50 dark:bg-yellow-900/20': row.type === 'modified',
                 'bg-gray-50/50 dark:bg-gray-900/30': row.type === 'empty'
               }"
             >
@@ -207,11 +471,32 @@ const clear = () => {
                 {{ row.lineNum }}
               </div>
               <div class="flex-1 px-2 whitespace-pre-wrap break-all py-0.5">
-                <span :class="{'text-green-700 dark:text-green-300': row.type === 'added'}">{{ row.value }}</span>
+                <template v-if="row.parts">
+                  <span
+                    v-for="(p, pIdx) in row.parts"
+                    :key="pIdx"
+                    :class="{
+                      'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200': p.type === 'added'
+                    }"
+                  >{{ p.value }}</span>
+                </template>
+                <span v-else :class="{'text-green-700 dark:text-green-300': row.type === 'added'}">{{ row.value }}</span>
               </div>
             </div>
           </div>
+          </div>
         </div>
+
+        <!-- Words / Chars -->
+        <pre v-else class="whitespace-pre-wrap break-all"><span 
+            v-for="(part, index) in diffResult" 
+            :key="index"
+            :class="{
+              'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200': part.added,
+              'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 decoration-red-500': part.removed,
+              'line-through opacity-70': part.removed
+            }"
+          >{{ part.value }}</span></pre>
       </div>
     </div>
   </div>
